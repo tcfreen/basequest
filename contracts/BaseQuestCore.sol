@@ -135,6 +135,11 @@ contract BaseQuestCore {
         referrals[msg.sender].push(referred);
         profiles[msg.sender].referralCount += 1;
         if (!isRegistered[referred]) _registerUser(referred);
+
+        // Award 10 XP bonus to the referred user
+        profiles[referred].totalXP += 10;
+        emit XPAwarded(referred, 10, profiles[referred].totalXP);
+
         dailyTasks[msg.sender].referralDone = true;
         _awardXPAndDistribute(msg.sender, 150, "REFERRAL");
         emit ReferralRegistered(msg.sender, referred, 150);
