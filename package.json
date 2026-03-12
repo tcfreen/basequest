@@ -1,0 +1,19 @@
+{
+  "name": "basequest",
+  "version": "1.0.0",
+  "description": "BaseQuest — Farm Base. Earn XP. Dominate the Chain.",
+  "private": true,
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test":    "npx hardhat test",
+    "deploy":  "npx hardhat run scripts/deploy.js --network base",
+    "verify":  "npx hardhat run scripts/verify.js --network base",
+    "frontend":"cd frontend && npm run dev",
+    "build":   "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "dotenv":  "^16.4.5",
+    "hardhat": "^2.22.2"
+  }
+}
