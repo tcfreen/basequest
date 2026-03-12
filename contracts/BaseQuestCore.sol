@@ -19,9 +19,21 @@ contract BaseQuestCore {
     }
 
     struct DailyTask {
-        bool gmDone; bool deployDone; bool swapDone;
-        bool bridgeDone; bool gameDone; bool referralDone;
+        bool gmDone;
+        bool deployDone;
+        bool swapDone;
+        bool bridgeDone;
+        bool gameDone;
+        bool referralDone;
         bool mintDone;
+        // Swap sub-tasks
+        bool swapAerodromeDone;
+        bool swapUniswapDone;
+        bool swapJumperDone;
+        bool swapRelayDone;
+        // Bridge sub-tasks
+        bool bridgeJumperDone;
+        bool bridgeRelayDone;
         uint256 day;
     }
 
@@ -69,7 +81,7 @@ contract BaseQuestCore {
         UserProfile storage p = profiles[user];
         if (p.lastActivityDay == 0) { p.streakCount = 1; }
         else if (today == p.lastActivityDay + 1) { p.streakCount += 1; }
-        else if (today > p.lastActivityDay + 1) { p.streakCount = 1; }
+        else if (today > p.lastActivityDay + 1)  { p.streakCount = 1; }
         p.lastActivityDay = today;
 
         if (p.streakCount > 0 && p.streakCount % 7 == 0) {
@@ -82,73 +94,72 @@ contract BaseQuestCore {
         emit TaskCompleted(user, taskType, xp, block.timestamp);
     }
 
+    // ── Main tasks ────────────────────────────────────────────────────────
+
     function completeGMTask() external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for GM task");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].gmDone, "BaseQuestCore: GM task already done today");
+        require(!dailyTasks[msg.sender].gmDone, "BaseQuestCore: already done today");
         dailyTasks[msg.sender].gmDone = true;
         _awardXPAndDistribute(msg.sender, 50, "GM_BASE");
     }
 
     function completeDeployTask(address deployedContract) external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for deploy task");
-        require(deployedContract != address(0), "BaseQuestCore: invalid contract address");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        require(deployedContract != address(0), "BaseQuestCore: invalid address");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].deployDone, "BaseQuestCore: deploy task already done today");
+        require(!dailyTasks[msg.sender].deployDone, "BaseQuestCore: already done today");
         dailyTasks[msg.sender].deployDone = true;
         _awardXPAndDistribute(msg.sender, 100, "DEPLOY_CONTRACT");
     }
 
     function completeSwapTask() external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for swap task");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].swapDone, "BaseQuestCore: swap task already done today");
+        require(!dailyTasks[msg.sender].swapDone, "BaseQuestCore: already done today");
         dailyTasks[msg.sender].swapDone = true;
         _awardXPAndDistribute(msg.sender, 75, "SWAP_BASE");
     }
 
     function completeBridgeTask() external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for bridge task");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].bridgeDone, "BaseQuestCore: bridge task already done today");
+        require(!dailyTasks[msg.sender].bridgeDone, "BaseQuestCore: already done today");
         dailyTasks[msg.sender].bridgeDone = true;
         _awardXPAndDistribute(msg.sender, 100, "BRIDGE_BASE");
     }
 
     function completeGameTask() external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for game task");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].gameDone, "BaseQuestCore: game task already done today");
+        require(!dailyTasks[msg.sender].gameDone, "BaseQuestCore: already done today");
         dailyTasks[msg.sender].gameDone = true;
         _awardXPAndDistribute(msg.sender, 75, "MINI_GAME");
     }
 
     function completeReferralTask(address referred) external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for referral task");
-        require(referred != address(0), "BaseQuestCore: invalid referred address");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        require(referred != address(0), "BaseQuestCore: invalid address");
         require(referred != msg.sender, "BaseQuestCore: cannot refer yourself");
-        require(!hasBeenReferred[referred], "BaseQuestCore: address already referred");
+        require(!hasBeenReferred[referred], "BaseQuestCore: already referred");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].referralDone, "BaseQuestCore: referral task already done today");
+        require(!dailyTasks[msg.sender].referralDone, "BaseQuestCore: already done today");
         hasBeenReferred[referred] = true;
         profiles[referred].referredBy = msg.sender;
         referrals[msg.sender].push(referred);
         profiles[msg.sender].referralCount += 1;
         if (!isRegistered[referred]) _registerUser(referred);
-
-        // Award 10 XP bonus to the referred user
         profiles[referred].totalXP += 10;
         emit XPAwarded(referred, 10, profiles[referred].totalXP);
-
         dailyTasks[msg.sender].referralDone = true;
         _awardXPAndDistribute(msg.sender, 150, "REFERRAL");
         emit ReferralRegistered(msg.sender, referred, 150);
     }
 
     function completeProfileTask(string calldata username) external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for profile task");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
         require(!profileTaskDone[msg.sender], "BaseQuestCore: profile already set");
-        require(bytes(username).length > 0, "BaseQuestCore: username cannot be empty");
+        require(bytes(username).length > 0, "BaseQuestCore: empty username");
         require(bytes(username).length <= 32, "BaseQuestCore: username too long");
         profileTaskDone[msg.sender] = true;
         profiles[msg.sender].username = username;
@@ -158,13 +169,67 @@ contract BaseQuestCore {
     }
 
     function completeMintNFTTask(address nftContract) external payable registered {
-        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment for mint task");
-        require(nftContract != address(0), "BaseQuestCore: invalid NFT contract address");
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        require(nftContract != address(0), "BaseQuestCore: invalid address");
         _resetDailyIfNeeded(msg.sender);
-        require(!dailyTasks[msg.sender].mintDone, "BaseQuestCore: mint task already done today");
+        require(!dailyTasks[msg.sender].mintDone, "BaseQuestCore: already done today");
         dailyTasks[msg.sender].mintDone = true;
         _awardXPAndDistribute(msg.sender, 125, "MINT_NFT");
     }
+
+    // ── Swap sub-tasks (50 XP each) ───────────────────────────────────────
+
+    function completeSwapAerodrome() external payable registered {
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        _resetDailyIfNeeded(msg.sender);
+        require(!dailyTasks[msg.sender].swapAerodromeDone, "BaseQuestCore: already done today");
+        dailyTasks[msg.sender].swapAerodromeDone = true;
+        _awardXPAndDistribute(msg.sender, 50, "SWAP_AERODROME");
+    }
+
+    function completeSwapUniswap() external payable registered {
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        _resetDailyIfNeeded(msg.sender);
+        require(!dailyTasks[msg.sender].swapUniswapDone, "BaseQuestCore: already done today");
+        dailyTasks[msg.sender].swapUniswapDone = true;
+        _awardXPAndDistribute(msg.sender, 50, "SWAP_UNISWAP");
+    }
+
+    function completeSwapJumper() external payable registered {
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        _resetDailyIfNeeded(msg.sender);
+        require(!dailyTasks[msg.sender].swapJumperDone, "BaseQuestCore: already done today");
+        dailyTasks[msg.sender].swapJumperDone = true;
+        _awardXPAndDistribute(msg.sender, 50, "SWAP_JUMPER");
+    }
+
+    function completeSwapRelay() external payable registered {
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        _resetDailyIfNeeded(msg.sender);
+        require(!dailyTasks[msg.sender].swapRelayDone, "BaseQuestCore: already done today");
+        dailyTasks[msg.sender].swapRelayDone = true;
+        _awardXPAndDistribute(msg.sender, 50, "SWAP_RELAY");
+    }
+
+    // ── Bridge sub-tasks (50 XP each) ─────────────────────────────────────
+
+    function completeBridgeJumper() external payable registered {
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        _resetDailyIfNeeded(msg.sender);
+        require(!dailyTasks[msg.sender].bridgeJumperDone, "BaseQuestCore: already done today");
+        dailyTasks[msg.sender].bridgeJumperDone = true;
+        _awardXPAndDistribute(msg.sender, 50, "BRIDGE_JUMPER");
+    }
+
+    function completeBridgeRelay() external payable registered {
+        require(msg.value == 0.00005 ether, "BaseQuestCore: incorrect payment");
+        _resetDailyIfNeeded(msg.sender);
+        require(!dailyTasks[msg.sender].bridgeRelayDone, "BaseQuestCore: already done today");
+        dailyTasks[msg.sender].bridgeRelayDone = true;
+        _awardXPAndDistribute(msg.sender, 50, "BRIDGE_RELAY");
+    }
+
+    // ── View functions ─────────────────────────────────────────────────────
 
     function getUserXP(address user) external view returns (uint256) { return profiles[user].totalXP; }
 
@@ -196,6 +261,20 @@ contract BaseQuestCore {
                 profileTaskDone[user], today && d.mintDone);
     }
 
+    function getSubTasks(address user) external view returns (
+        bool swapAerodromeDone, bool swapUniswapDone,
+        bool swapJumperDone,    bool swapRelayDone,
+        bool bridgeJumperDone,  bool bridgeRelayDone
+    ) {
+        DailyTask storage d = dailyTasks[user];
+        bool today = (d.day == _today());
+        return (
+            today && d.swapAerodromeDone, today && d.swapUniswapDone,
+            today && d.swapJumperDone,    today && d.swapRelayDone,
+            today && d.bridgeJumperDone,  today && d.bridgeRelayDone
+        );
+    }
+
     function getTopUsers(uint256 count) external view returns (address[] memory topAddresses, uint256[] memory topXPs) {
         uint256 total = allUsers.length;
         if (count > total) count = total;
@@ -220,7 +299,10 @@ contract BaseQuestCore {
         }
         topAddresses = new address[](count);
         topXPs       = new uint256[](count);
-        for (uint256 i = 0; i < count; i++) { topAddresses[i] = sortedAddrs[i]; topXPs[i] = sortedXPs[i]; }
+        for (uint256 i = 0; i < count; i++) {
+            topAddresses[i] = sortedAddrs[i];
+            topXPs[i]       = sortedXPs[i];
+        }
     }
 
     function getTotalUsers() external view returns (uint256) { return allUsers.length; }
