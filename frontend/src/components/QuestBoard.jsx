@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TASKS, SWAP_PLATFORMS, BRIDGE_PLATFORMS } from "../utils/contracts";
+import { TASKS, SWAP_PLATFORMS, BRIDGE_PLATFORMS, DEPLOY_PLATFORMS } from "../utils/contracts";
 
 export default function QuestBoard({ quests, wallet }) {
   const { isConnected } = wallet;
@@ -9,9 +9,9 @@ export default function QuestBoard({ quests, wallet }) {
     completedCount, totalDaily,
   } = quests;
 
-  const [fieldValues,   setFieldValues]   = useState({});
-  const [expandedTask,  setExpandedTask]  = useState(null);
-  const [expandedSubs,  setExpandedSubs]  = useState({});
+  const [fieldValues,  setFieldValues]  = useState({});
+  const [expandedTask, setExpandedTask] = useState(null);
+  const [expandedSubs, setExpandedSubs] = useState({});
 
   const handleField = (taskId, field, value) => {
     setFieldValues(prev => ({ ...prev, [taskId]: { ...prev[taskId], [field]: value } }));
@@ -23,6 +23,63 @@ export default function QuestBoard({ quests, wallet }) {
 
   const toggleSubs = (taskId) => {
     setExpandedSubs(prev => ({ ...prev, [taskId]: !prev[taskId] }));
+  };
+
+  const renderSubTasks = (platforms, groupId) => {
+    const isOpen = expandedSubs[groupId];
+    return (
+      <div style={{ marginTop: "14px" }}>
+        <div
+          onClick={() => toggleSubs(groupId)}
+          style={{ color: "#0052ff", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "10px" }}
+        >
+          {isOpen ? "▲" : "▼"} Platform sub-tasks (+50 XP each)
+        </div>
+        {isOpen && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "14px" }}>
+            {platforms.map(p => {
+              const subDone = getSubTaskStatus(p.id).done;
+              return (
+                <div key={p.id} style={{
+                  display:      "flex",
+                  alignItems:   "center",
+                  gap:          "10px",
+                  background:   subDone ? "rgba(0,200,83,0.08)" : "rgba(255,255,255,0.03)",
+                  border:       `1px solid ${subDone ? "rgba(0,200,83,0.2)" : "rgba(255,255,255,0.06)"}`,
+                  borderRadius: "10px",
+                  padding:      "10px 14px",
+                }}>
+                  <span style={{ fontSize: "20px" }}>{p.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: "white", fontSize: "13px", fontWeight: "600" }}>{p.name}</div>
+                  </div>
+                  <a href={p.url} target="_blank" rel="noreferrer"
+                    style={{ color: p.color, fontSize: "12px", fontWeight: "600", textDecoration: "none" }}>
+                    Go ↗
+                  </a>
+                  <button
+                    onClick={() => completeTask(p.id)}
+                    disabled={subDone || txPending}
+                    style={{
+                      background:   subDone ? "rgba(0,200,83,0.2)" : `${p.color}22`,
+                      border:       `1px solid ${subDone ? "rgba(0,200,83,0.4)" : p.color + "44"}`,
+                      borderRadius: "8px",
+                      padding:      "5px 12px",
+                      color:        subDone ? "#00c853" : p.color,
+                      fontSize:     "12px",
+                      fontWeight:   "700",
+                      cursor:       subDone || txPending ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    {subDone ? "✓ Done" : "+50 XP"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
   };
 
   if (!isConnected) return (
@@ -50,9 +107,14 @@ export default function QuestBoard({ quests, wallet }) {
       {/* Status messages */}
       {lastTx?.status === "success" && (
         <div style={{
-          background: "rgba(0,200,83,0.1)", border: "1px solid rgba(0,200,83,0.3)",
-          borderRadius: "12px", padding: "12px 16px", marginBottom: "16px",
-          color: "#00c853", fontWeight: "600", fontSize: "14px",
+          background:   "rgba(0,200,83,0.1)",
+          border:       "1px solid rgba(0,200,83,0.3)",
+          borderRadius: "12px",
+          padding:      "12px 16px",
+          marginBottom: "16px",
+          color:        "#00c853",
+          fontWeight:   "600",
+          fontSize:     "14px",
         }}>
           ✅ {lastTx.msg}{" "}
           <a href={`https://basescan.org/tx/${lastTx.hash}`} target="_blank" rel="noreferrer"
@@ -61,9 +123,14 @@ export default function QuestBoard({ quests, wallet }) {
       )}
       {error && (
         <div style={{
-          background: "rgba(255,59,59,0.1)", border: "1px solid rgba(255,59,59,0.3)",
-          borderRadius: "12px", padding: "12px 16px", marginBottom: "16px",
-          color: "#ff6b6b", fontWeight: "600", fontSize: "14px",
+          background:   "rgba(255,59,59,0.1)",
+          border:       "1px solid rgba(255,59,59,0.3)",
+          borderRadius: "12px",
+          padding:      "12px 16px",
+          marginBottom: "16px",
+          color:        "#ff6b6b",
+          fontWeight:   "600",
+          fontSize:     "14px",
         }}>
           ⚠️ {error}
         </div>
@@ -99,15 +166,15 @@ export default function QuestBoard({ quests, wallet }) {
               >
                 {/* Icon */}
                 <div style={{
-                  fontSize:     "28px",
-                  width:        "44px",
-                  height:       "44px",
-                  display:      "flex",
-                  alignItems:   "center",
+                  fontSize:       "28px",
+                  width:          "44px",
+                  height:         "44px",
+                  display:        "flex",
+                  alignItems:     "center",
                   justifyContent: "center",
-                  background:   isDone ? "rgba(0,200,83,0.15)" : "rgba(255,255,255,0.05)",
-                  borderRadius: "12px",
-                  flexShrink:   0,
+                  background:     isDone ? "rgba(0,200,83,0.15)" : "rgba(255,255,255,0.05)",
+                  borderRadius:   "12px",
+                  flexShrink:     0,
                 }}>
                   {task.icon}
                 </div>
@@ -116,9 +183,10 @@ export default function QuestBoard({ quests, wallet }) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                     <span style={{ color: "white", fontWeight: "700", fontSize: "15px" }}>{task.name}</span>
-                    {isDone  && <span style={{ background: "rgba(0,200,83,0.2)",  color: "#00c853", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "20px" }}>DONE</span>}
-                    {isAuto  && <span style={{ background: "rgba(240,180,41,0.2)", color: "#f0b429", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "20px" }}>AUTO</span>}
+                    {isDone    && <span style={{ background: "rgba(0,200,83,0.2)",   color: "#00c853", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "20px" }}>DONE</span>}
+                    {isAuto    && <span style={{ background: "rgba(240,180,41,0.2)", color: "#f0b429", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "20px" }}>AUTO</span>}
                     {task.oneTime && !isDone && <span style={{ background: "rgba(168,85,247,0.2)", color: "#a855f7", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "20px" }}>ONE-TIME</span>}
+                    {task.hasSubs && !isDone && <span style={{ background: "rgba(0,82,255,0.2)", color: "#00d4ff", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "20px" }}>+BONUS XP</span>}
                   </div>
                   <div style={{ color: "#8892a4", fontSize: "13px", marginTop: "2px" }}>{task.description}</div>
                 </div>
@@ -145,7 +213,7 @@ export default function QuestBoard({ quests, wallet }) {
 
                   {/* Input field if needed */}
                   {task.field && (
-                    <div style={{ marginTop: "14px", marginBottom: "14px" }}>
+                    <div style={{ marginTop: "14px", marginBottom: "4px" }}>
                       <label style={{ color: "#8892a4", fontSize: "12px", fontWeight: "600", display: "block", marginBottom: "6px" }}>
                         {task.fieldLabel}
                       </label>
@@ -168,115 +236,14 @@ export default function QuestBoard({ quests, wallet }) {
                     </div>
                   )}
 
-                  {/* Sub-tasks for swap */}
-                  {task.id === "swap" && (
-                    <div style={{ marginTop: "14px" }}>
-                      <div
-                        onClick={() => toggleSubs("swap")}
-                        style={{ color: "#0052ff", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "10px" }}
-                      >
-                        {expandedSubs.swap ? "▲" : "▼"} Platform sub-tasks (+50 XP each)
-                      </div>
-                      {expandedSubs.swap && (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "14px" }}>
-                          {SWAP_PLATFORMS.map(p => {
-                            const subDone = getSubTaskStatus(p.id).done;
-                            return (
-                              <div key={p.id} style={{
-                                display:      "flex",
-                                alignItems:   "center",
-                                gap:          "10px",
-                                background:   subDone ? "rgba(0,200,83,0.08)" : "rgba(255,255,255,0.03)",
-                                border:       `1px solid ${subDone ? "rgba(0,200,83,0.2)" : "rgba(255,255,255,0.06)"}`,
-                                borderRadius: "10px",
-                                padding:      "10px 14px",
-                              }}>
-                                <span style={{ fontSize: "20px" }}>{p.icon}</span>
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ color: "white", fontSize: "13px", fontWeight: "600" }}>{p.name}</div>
-                                </div>
-                                <a href={p.url} target="_blank" rel="noreferrer"
-                                  style={{ color: p.color, fontSize: "12px", fontWeight: "600", textDecoration: "none" }}>
-                                  Go ↗
-                                </a>
-                                <button
-                                  onClick={() => completeTask(p.id)}
-                                  disabled={subDone || txPending}
-                                  style={{
-                                    background:   subDone ? "rgba(0,200,83,0.2)" : `${p.color}22`,
-                                    border:       `1px solid ${subDone ? "rgba(0,200,83,0.4)" : p.color + "44"}`,
-                                    borderRadius: "8px",
-                                    padding:      "5px 12px",
-                                    color:        subDone ? "#00c853" : p.color,
-                                    fontSize:     "12px",
-                                    fontWeight:   "700",
-                                    cursor:       subDone || txPending ? "not-allowed" : "pointer",
-                                  }}
-                                >
-                                  {subDone ? "✓ Done" : "+50 XP"}
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  {/* Deploy sub-tasks */}
+                  {task.id === "deploy" && renderSubTasks(DEPLOY_PLATFORMS, "deploy")}
 
-                  {/* Sub-tasks for bridge */}
-                  {task.id === "bridge" && (
-                    <div style={{ marginTop: "14px" }}>
-                      <div
-                        onClick={() => toggleSubs("bridge")}
-                        style={{ color: "#0052ff", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "10px" }}
-                      >
-                        {expandedSubs.bridge ? "▲" : "▼"} Platform sub-tasks (+50 XP each)
-                      </div>
-                      {expandedSubs.bridge && (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "14px" }}>
-                          {BRIDGE_PLATFORMS.map(p => {
-                            const subDone = getSubTaskStatus(p.id).done;
-                            return (
-                              <div key={p.id} style={{
-                                display:      "flex",
-                                alignItems:   "center",
-                                gap:          "10px",
-                                background:   subDone ? "rgba(0,200,83,0.08)" : "rgba(255,255,255,0.03)",
-                                border:       `1px solid ${subDone ? "rgba(0,200,83,0.2)" : "rgba(255,255,255,0.06)"}`,
-                                borderRadius: "10px",
-                                padding:      "10px 14px",
-                              }}>
-                                <span style={{ fontSize: "20px" }}>{p.icon}</span>
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ color: "white", fontSize: "13px", fontWeight: "600" }}>{p.name}</div>
-                                </div>
-                                <a href={p.url} target="_blank" rel="noreferrer"
-                                  style={{ color: p.color, fontSize: "12px", fontWeight: "600", textDecoration: "none" }}>
-                                  Go ↗
-                                </a>
-                                <button
-                                  onClick={() => completeTask(p.id)}
-                                  disabled={subDone || txPending}
-                                  style={{
-                                    background:   subDone ? "rgba(0,200,83,0.2)" : `${p.color}22`,
-                                    border:       `1px solid ${subDone ? "rgba(0,200,83,0.4)" : p.color + "44"}`,
-                                    borderRadius: "8px",
-                                    padding:      "5px 12px",
-                                    color:        subDone ? "#00c853" : p.color,
-                                    fontSize:     "12px",
-                                    fontWeight:   "700",
-                                    cursor:       subDone || txPending ? "not-allowed" : "pointer",
-                                  }}
-                                >
-                                  {subDone ? "✓ Done" : "+50 XP"}
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  {/* Swap sub-tasks */}
+                  {task.id === "swap" && renderSubTasks(SWAP_PLATFORMS, "swap")}
+
+                  {/* Bridge sub-tasks */}
+                  {task.id === "bridge" && renderSubTasks(BRIDGE_PLATFORMS, "bridge")}
 
                   {/* Complete button */}
                   <button
