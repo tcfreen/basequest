@@ -3,13 +3,18 @@ import { ethers } from "ethers";
 import { getCoreContract, getReadProvider, shortAddr, timeAgo } from "../utils/contracts.js";
 
 const TASK_META = {
-  GM_BASE:          { emoji: "☀️",  label: "GM Base",        xp: 50  },
-  DEPLOY_CONTRACT:  { emoji: "🚀",  label: "Deploy Contract", xp: 100 },
-  SWAP_BASE:        { emoji: "🔄",  label: "Swap on Base",    xp: 75  },
-  BRIDGE_BASE:      { emoji: "🌉",  label: "Bridge to Base",  xp: 100 },
-  MINI_GAME:        { emoji: "🎲",  label: "Mini-Game",       xp: 75  },
-  REFERRAL:         { emoji: "👥",  label: "Referral",        xp: 150 },
-  SET_PROFILE:      { emoji: "🪪",  label: "Set Profile",     xp: 50  },
+  GM_BASE:          { emoji: "☀️",  label: "GM Base",          xp: 50  },
+  DEPLOY_CONTRACT:  { emoji: "🚀",  label: "Deploy Contract",   xp: 100 },
+  SWAP_BASE:        { emoji: "🔄",  label: "Swap on Base",      xp: 75  },
+  BRIDGE_BASE:      { emoji: "🌉",  label: "Bridge to Base",    xp: 100 },
+  MINI_GAME:        { emoji: "🐉",  label: "Boss Raid",         xp: 75  },
+  SET_PROFILE:      { emoji: "🪪",  label: "Set Profile",       xp: 50  },
+  SWAP_AERODROME:   { emoji: "✈️",  label: "Swap Aerodrome",    xp: 50  },
+  SWAP_UNISWAP:     { emoji: "🦄",  label: "Swap Uniswap",      xp: 50  },
+  SWAP_JUMPER:      { emoji: "🦗",  label: "Swap Jumper",       xp: 50  },
+  SWAP_RELAY:       { emoji: "⚡",  label: "Swap Relay",        xp: 50  },
+  BRIDGE_JUMPER:    { emoji: "🦗",  label: "Bridge Jumper",     xp: 50  },
+  BRIDGE_RELAY:     { emoji: "⚡",  label: "Bridge Relay",      xp: 50  },
 };
 
 export default function ActivityFeed({ limit = 10 }) {
