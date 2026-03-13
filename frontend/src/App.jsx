@@ -115,7 +115,7 @@ export default function App() {
             onMouseEnter={e => e.currentTarget.style.color = "white"}
             onMouseLeave={e => e.currentTarget.style.color = "#8892a4"}
           >
-            𝕏 @Jee_phoenix
+            𝕏 Contact Us
           </a>
         </div>
         <div style={{ color: "#4a5568", fontSize: "12px", marginBottom: "4px" }}>
