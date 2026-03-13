@@ -122,7 +122,7 @@ export default function App() {
           © 2026 BaseQuest™ — All rights reserved.
         </div>
         <div style={{ color: "#4a5568", fontSize: "11px" }}>
-          Built on Base Mainnet 🔵
+          Built on Base 🟦
         </div>
       </div>
 
