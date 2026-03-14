@@ -167,7 +167,7 @@ export default function Dashboard({ quests, wallet, setActiveTab }) {
             boxShadow:    "0 4px 20px rgba(0,82,255,0.3)",
           }}
         >
-          🗺️ Daily Quests
+          📣 Daily Quests
         </button>
         <button
           onClick={() => setActiveTab("bossraid")}
