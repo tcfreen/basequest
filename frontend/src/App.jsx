@@ -38,7 +38,7 @@ export default function App() {
       <Navbar wallet={walletWithProfile} />
 
       {/* Page content */}
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 16px 80px" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 16px 100px" }}>
         {renderTab()}
       </div>
 
@@ -73,10 +73,11 @@ export default function App() {
         maxWidth: "480px",
         display: "flex",
         justifyContent: "space-between",
-        background: "rgba(10,11,15,0.95)",
-        borderRadius: "20px",
+        background: "rgba(10,11,15,0.6)",
+        borderRadius: "25%",
         padding: "6px 4px",
-        boxShadow: "0 6px 20px rgba(0,0,0,0.25)",
+        boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
+        backdropFilter: "blur(15px)",
         zIndex: 100,
       }} className="mobile-nav">
 
@@ -92,25 +93,27 @@ export default function App() {
               justifyContent: "center",
               cursor: "pointer",
               position: "relative",
+              padding: "4px 0",
             }}
           >
             {/* Highlight rectangle */}
             {activeTab === tab.id && (
               <div style={{
                 position: "absolute",
-                top: "4px",
-                width: "48px",
-                height: "36px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #0052ff, #0041cc)",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                borderRadius: "25%",
+                background: "rgba(0,82,255,0.3)",
+                backdropFilter: "blur(10px)",
+                boxShadow: "0 4px 12px rgba(0,82,255,0.4)",
                 zIndex: -1,
                 transition: "all 0.2s",
               }} />
             )}
-            <span style={{ fontSize: "26px", marginBottom: "2px" }}>{tab.icon}</span>
-            <span style={{ fontSize: "12px", color: activeTab === tab.id ? "white" : "#8892a4", fontWeight: activeTab === tab.id ? 600 : 400 }}>
-              {tab.label}
-            </span>
+            <span style={{ fontSize: "28px", marginBottom: "2px" }}>{tab.icon}</span>
+            <span style={{ fontSize: "12px", color: "white", fontWeight: 600 }}>{tab.label}</span>
           </div>
         ))}
       </div>
