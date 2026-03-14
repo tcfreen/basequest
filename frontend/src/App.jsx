@@ -66,7 +66,7 @@ export default function App() {
       {/* Mobile floating bottom nav */}
       <div style={{
         position: "fixed",
-        bottom: "12px",
+        bottom: "18px", // pushed slightly upward
         left: "50%",
         transform: "translateX(-50%)",
         width: "90%",
@@ -78,17 +78,17 @@ export default function App() {
         padding: "2px 0",
         backdropFilter: "blur(15px)",
         zIndex: 100,
-        boxShadow: "0 6px 10px rgba(0,0,0,0.35)",
+        boxShadow: "0 6px 10px rgba(0,0,0,0.35)", // shadow only below
       }} className="mobile-nav">
 
         {/* Sliding highlight */}
         <div
           style={{
             position: "absolute",
-            top: "2%",            // very slight upward
+            top: "2%",
             left: `${highlightPosition}%`,
             width: `${100 / TABS.length}%`,
-            height: "96%",        // very slight reduction
+            height: "96%",
             borderRadius: "9999px",
             background: "rgba(0,82,255,0.3)",
             backdropFilter: "blur(10px)",
