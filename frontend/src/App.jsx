@@ -9,7 +9,7 @@ import Leaderboard from "./components/Leaderboard";
 import WalletAnalyzer from "./components/WalletAnalyzer";
 
 const TABS = [
-  { id: "dashboard", label: "Dashboa", icon: "🏠" },
+  { id: "dashboard", label: "Dashboa", icon: "🖕" },
   { id: "quests", label: "Quests", icon: "🗺️" },
   { id: "bossraid", label: "Boss Raid", icon: "🐉" },
   { id: "leaderboard", label: "Leaderboard", icon: "🏆" },
