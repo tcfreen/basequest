@@ -39,7 +39,7 @@ export default function Dashboard({ quests, wallet, setActiveTab }) {
         <p style={{ color: "#8892a4", fontSize: "13px" }}>BaseQuest dashboard</p>
       </div>
 
-      {/* Current Level Box (1x1) */}
+      {/* Row 1: Current Level (1x1 full width) */}
       {levelInfo && (
         <div style={{
           background: "linear-gradient(135deg, rgba(0,82,255,0.18), rgba(0,82,255,0.04))",
@@ -70,78 +70,71 @@ export default function Dashboard({ quests, wallet, setActiveTab }) {
         </div>
       )}
 
-      {/* Tasks Completed (2x1) */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "12px"
-      }}>
+      {/* Row 2: Tasks Completed / Today Completed (2x1) */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
         <div style={{
           background: "rgba(255,255,255,0.03)",
           border: "1px solid rgba(255,255,255,0.06)",
           borderRadius: "14px",
           padding: "16px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "6px"
+          textAlign: "center"
         }}>
-          <img src="/check.svg" style={{ width: "24px", height: "24px" }} />
+          <img src="/check.svg" style={{ width: "24px", height: "24px", marginBottom: "6px" }} />
           <div style={{ color: "white", fontWeight: "700", fontSize: "16px" }}>
             {userProfile?.tasksCompleted?.toLocaleString() || "0"}
           </div>
-          <div style={{ color: "#8892a4", fontSize: "12px" }}>Tasks Completed</div>
-          <div style={{ color: "#8892a4", fontSize: "11px" }}>Today: {completedCount}/{totalDaily}</div>
+          <div style={{ color: "#8892a4", fontSize: "12px" }}>Total Tasks</div>
         </div>
 
-        {/* Streak / Member Since (2x1) */}
         <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "12px"
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: "14px",
+          padding: "16px",
+          textAlign: "center"
         }}>
-          <div style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "14px",
-            padding: "16px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "6px"
-          }}>
-            <img src="/streak.svg" style={{ width: "24px", height: "24px" }} />
-            <div style={{ color: "white", fontWeight: "700", fontSize: "16px" }}>
-              {userProfile?.streakCount || "0"}
-            </div>
-            <div style={{ color: "#8892a4", fontSize: "12px" }}>Day Streak</div>
+          <img src="/progress.svg" style={{ width: "24px", height: "24px", marginBottom: "6px" }} />
+          <div style={{ color: "white", fontWeight: "700", fontSize: "16px" }}>
+            {completedCount}/{totalDaily}
           </div>
-
-          <div style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "14px",
-            padding: "16px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "6px"
-          }}>
-            <img src="/calendar.svg" style={{ width: "24px", height: "24px" }} />
-            <div style={{ color: "white", fontWeight: "700", fontSize: "16px" }}>
-              {userProfile?.joinedAt
-                ? new Date(userProfile.joinedAt * 1000).toLocaleDateString("en-US",{month:"short",year:"numeric"})
-                : "-"}
-            </div>
-            <div style={{ color: "#8892a4", fontSize: "12px" }}>Member Since</div>
-          </div>
+          <div style={{ color: "#8892a4", fontSize: "12px" }}>Today Completed</div>
         </div>
       </div>
 
-      {/* Leaderboard (1x1 full width) */}
+      {/* Row 3: Streak / Member Since (2x1) */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: "14px",
+          padding: "16px",
+          textAlign: "center"
+        }}>
+          <img src="/streak.svg" style={{ width: "24px", height: "24px", marginBottom: "6px" }} />
+          <div style={{ color: "white", fontWeight: "700", fontSize: "16px" }}>
+            {userProfile?.streakCount || "0"}
+          </div>
+          <div style={{ color: "#8892a4", fontSize: "12px" }}>Day Streak</div>
+        </div>
+
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: "14px",
+          padding: "16px",
+          textAlign: "center"
+        }}>
+          <img src="/calendar.svg" style={{ width: "24px", height: "24px", marginBottom: "6px" }} />
+          <div style={{ color: "white", fontWeight: "700", fontSize: "16px" }}>
+            {userProfile?.joinedAt
+              ? new Date(userProfile.joinedAt * 1000).toLocaleDateString("en-US",{month:"short",year:"numeric"})
+              : "-"}
+          </div>
+          <div style={{ color: "#8892a4", fontSize: "12px" }}>Member Since</div>
+        </div>
+      </div>
+
+      {/* Row 4: Leaderboard (1x1 full width) */}
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
           onClick={() => setActiveTab("leaderboard")}
