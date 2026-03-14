@@ -8,10 +8,10 @@ import BossRaid from "./components/BossRaid";
 import WalletAnalyzer from "./components/WalletAnalyzer";
 
 const TABS = [
-  { id: "dashboard", label: "Chats", icon: "💬" },
-  { id: "quests", label: "Contacts", icon: "👤" },
-  { id: "bossraid", label: "Settings", icon: "⚙️" },
-  { id: "analyzer", label: "Profile", icon: "👤" },
+  { id: "dashboard", label: "Dashboard", icon: "🏠" },
+  { id: "quests", label: "Quests", icon: "🗺️" },
+  { id: "bossraid", label: "Boss", icon: "🐉" },
+  { id: "analyzer", label: "Wallet", icon: "🔍" },
 ];
 
 export default function App() {
@@ -65,19 +65,19 @@ export default function App() {
       {/* Mobile floating bottom nav */}
       <div style={{
         position: "fixed",
-        bottom: "16px",
+        bottom: "12px",
         left: "50%",
         transform: "translateX(-50%)",
-        width: "92%",
-        maxWidth: "420px",
+        width: "90%",
+        maxWidth: "480px",
         display: "flex",
         justifyContent: "space-between",
-        background: "#212121", 
-        borderRadius: "100px", 
-        padding: "4px",
+        background: "rgba(10,11,15,0.6)",
+        borderRadius: "9999px", // pill shape
+        padding: "6px 4px",
         backdropFilter: "blur(15px)",
         zIndex: 100,
-        boxShadow: "0 8px 20px rgba(0,0,0,0.4)", 
+        boxShadow: "0 6px 10px rgba(0,0,0,0.35)", // shadow only below
       }} className="mobile-nav">
 
         {TABS.map((tab) => (
@@ -92,39 +92,26 @@ export default function App() {
               justifyContent: "center",
               cursor: "pointer",
               position: "relative",
-              padding: "10px 0",
-              borderRadius: "100px",
-              background: activeTab === tab.id ? "rgba(255,255,255,0.08)" : "transparent",
-              transition: "all 0.2s ease",
+              padding: "4px 0",
             }}
           >
-             {/* Badge Logic (Manual example for 'Chats' like your image) */}
-             {tab.id === "dashboard" && (
-              <span style={{
+            {/* Highlight rectangle */}
+            {activeTab === tab.id && (
+              <div style={{
                 position: "absolute",
-                top: "4px",
-                right: "22%",
-                background: "#3390ec",
-                color: "white",
-                fontSize: "10px",
-                padding: "1px 5px",
-                borderRadius: "10px",
-                border: "2px solid #212121",
-                fontWeight: "bold"
-              }}>98</span>
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                borderRadius: "9999px", // match pill shape
+                background: "rgba(0,82,255,0.3)",
+                backdropFilter: "blur(10px)",
+                zIndex: -1,
+                transition: "all 0.2s",
+              }} />
             )}
-
-            <span style={{ 
-              fontSize: "22px", 
-              marginBottom: "2px",
-              color: activeTab === tab.id ? "#3390ec" : "white",
-              opacity: activeTab === tab.id ? 1 : 0.6
-            }}>{tab.icon}</span>
-            <span style={{ 
-              fontSize: "11px", 
-              color: activeTab === tab.id ? "#3390ec" : "#aaaaaa", 
-              fontWeight: 600 
-            }}>{tab.label}</span>
+            <span style={{ fontSize: "28px", marginBottom: "2px" }}>{tab.icon}</span>
+            <span style={{ fontSize: "12px", color: "white", fontWeight: 600 }}>{tab.label}</span>
           </div>
         ))}
       </div>
