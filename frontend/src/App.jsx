@@ -8,10 +8,10 @@ import BossRaid from "./components/BossRaid";
 import WalletAnalyzer from "./components/WalletAnalyzer";
 
 const TABS = [
-  { id: "dashboard", label: "Dashboard", icon: "🏠" },
-  { id: "quests", label: "Quests", icon: "🗺️" },
-  { id: "bossraid", label: "Boss", icon: "🐉" },
-  { id: "analyzer", label: "Wallet", icon: "🔍" },
+  { id: "dashboard", label: "Chats", icon: "💬" },
+  { id: "quests", label: "Contacts", icon: "👤" },
+  { id: "bossraid", label: "Settings", icon: "⚙️" },
+  { id: "analyzer", label: "Profile", icon: "👤" },
 ];
 
 export default function App() {
@@ -61,6 +61,89 @@ export default function App() {
           Built with 💙 on Base 🟦
         </div>
       </div>
+
+      {/* Mobile floating bottom nav */}
+      <div style={{
+        position: "fixed",
+        bottom: "16px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "92%",
+        maxWidth: "420px",
+        display: "flex",
+        justifyContent: "space-between",
+        background: "#212121", 
+        borderRadius: "100px", 
+        padding: "4px",
+        backdropFilter: "blur(15px)",
+        zIndex: 100,
+        boxShadow: "0 8px 20px rgba(0,0,0,0.4)", 
+      }} className="mobile-nav">
+
+        {TABS.map((tab) => (
+          <div
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              position: "relative",
+              padding: "10px 0",
+              borderRadius: "100px",
+              background: activeTab === tab.id ? "rgba(255,255,255,0.08)" : "transparent",
+              transition: "all 0.2s ease",
+            }}
+          >
+             {/* Badge Logic (Manual example for 'Chats' like your image) */}
+             {tab.id === "dashboard" && (
+              <span style={{
+                position: "absolute",
+                top: "4px",
+                right: "22%",
+                background: "#3390ec",
+                color: "white",
+                fontSize: "10px",
+                padding: "1px 5px",
+                borderRadius: "10px",
+                border: "2px solid #212121",
+                fontWeight: "bold"
+              }}>98</span>
+            )}
+
+            <span style={{ 
+              fontSize: "22px", 
+              marginBottom: "2px",
+              color: activeTab === tab.id ? "#3390ec" : "white",
+              opacity: activeTab === tab.id ? 1 : 0.6
+            }}>{tab.icon}</span>
+            <span style={{ 
+              fontSize: "11px", 
+              color: activeTab === tab.id ? "#3390ec" : "#aaaaaa", 
+              fontWeight: 600 
+            }}>{tab.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Global styles */}
+      <style>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #0a0b0f; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,82,255,0.3); border-radius: 3px; }
+        input::placeholder { color: #4a5568; }
+        a { color: inherit; }
+        @media (min-width: 768px) { .mobile-nav { display: none !important; } }
+        @media (max-width: 767px) { .mobile-nav { display: flex !important; } }
+      `}</style>
+    </div>
+  );
+}
 
       {/* Mobile floating bottom nav */}
       <div style={{
