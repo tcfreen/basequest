@@ -85,10 +85,10 @@ export default function App() {
         <div
           style={{
             position: "absolute",
-            top: "3%",             // moved slightly upward
+            top: "2%",            // very slight upward
             left: `${highlightPosition}%`,
             width: `${100 / TABS.length}%`,
-            height: "94%",          // slightly shorter than full container
+            height: "96%",        // very slight reduction
             borderRadius: "9999px",
             background: "rgba(0,82,255,0.3)",
             backdropFilter: "blur(10px)",
