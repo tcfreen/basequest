@@ -8,10 +8,10 @@ import BossRaid from "./components/BossRaid";
 import WalletAnalyzer from "./components/WalletAnalyzer";
 
 const TABS = [
-  { id: "dashboard", label: "Dashboard", icon: "/images/dashboard.png" },
-  { id: "quests", label: "Quests", icon: "/images/quests.png" },
-  { id: "bossraid", label: "Boss", icon: "/images/boss.png" },
-  { id: "analyzer", label: "Wallet", icon: "/images/wallet.png" },
+  { id: "dashboard", label: "Dashboard", icon: "/dashboard.png" },
+  { id: "quests", label: "Quests", icon: "/quests.png" },
+  { id: "bossraid", label: "Boss", icon: "/boss.png" },
+  { id: "analyzer", label: "Wallet", icon: "/wallet.png" },
 ];
 
 export default function App() {
@@ -112,10 +112,10 @@ export default function App() {
               cursor: "pointer",
               position: "relative",
               padding: "2px 0",
-              transform: "translateY(-2px)",
+              transform: "translateY(2px)", // moved down a little
             }}
           >
-            <img src={tab.icon} alt={tab.label} style={{ width: "22px", height: "22px", marginBottom: "2px" }} />
+            <img src={tab.icon} alt={tab.label} style={{ width: "22px", height: "22px", marginBottom: "1px" }} />
             <span style={{ fontSize: "10px", color: "white", fontWeight: 700 }}>{tab.label}</span>
           </div>
         ))}
