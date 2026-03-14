@@ -14,6 +14,8 @@ const TABS = [
   { id: "analyzer", label: "Wallet", icon: "/wallet.svg" },
 ];
 
+const SELECTED_BLUE = "#0052FF";
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [highlightPosition, setHighlightPosition] = useState(0);
@@ -107,7 +109,7 @@ export default function App() {
               cursor: "pointer",
               position: "relative",
               padding: "2px 0",
-              transform: "translateY(2px)",
+              transform: "translateY(0px)", // slightly up
             }}
           >
             <img
@@ -125,7 +127,8 @@ export default function App() {
             <span style={{
               fontSize: "10px",
               fontWeight: 700,
-              color: activeTab === tab.id ? "#0052FF" : "white", // selected text blue
+              color: activeTab === tab.id ? SELECTED_BLUE : "white", // same color as icon
+              transform: "translateY(-1px)", // slightly up
             }}>{tab.label}</span>
           </div>
         ))}
