@@ -177,7 +177,7 @@ export default function QuestBoard({ quests, wallet }) {
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
-        <Icon src="/quests.svg" size={m ? 36 : 48} style={{ margin: "0 auto 16px", filter: WHITE, opacity: 0.6 }} />
+        <Icon src="/quests.svg" size={m ? 40 : 46} style={{ filter: "brightness(0) invert(1)", opacity: 0.85 }} />
         <div>
           <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>Quest Board</h2>
           <p className="db" style={{ color: "#5a6478", fontSize: m ? "10px" : "11px", margin: 0, fontWeight: 600, letterSpacing: "0.07em" }}>
@@ -318,4 +318,4 @@ export default function QuestBoard({ quests, wallet }) {
       </div>
     </div>
   );
-                                                    }
+      }
