@@ -17,6 +17,8 @@ const WALLETS = [
   { id: "injected", label: "Rabby / Other",   icon: "/rabby.svg"     },
 ];
 
+const WHITE = "brightness(0) invert(1)";
+
 export default function Navbar({ wallet }) {
   const { address, isConnected, isConnecting, isCorrectNetwork,
           connect, disconnect, switchNetwork, userProfile } = wallet;
@@ -114,7 +116,7 @@ export default function Navbar({ wallet }) {
               >
                 {isConnecting
                   ? <><Icon src="/hourglass.svg" size={14} style={{ opacity: 0.8 }} /> Connecting...</>
-                  : <><Icon src="/wallet.svg"    size={14} style={{ opacity: 0.9 }} /> {m ? "Connect" : "Connect Wallet"}</>
+                  : <><Icon src="/wallet.svg"    size={14} style={{ filter: WHITE, opacity: 0.9 }} /> {m ? "Connect" : "Connect Wallet"}</>
                 }
               </button>
 
@@ -161,7 +163,7 @@ export default function Navbar({ wallet }) {
                     onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
                     onMouseLeave={e => e.currentTarget.style.background = "none"}
                   >
-                    <Icon src="/basescan.svg" size={16} style={{ opacity: 0.75 }} />
+                    <Icon src="/basescan.svg" size={16} style={{ filter: WHITE }} />
                     View on Basescan
                   </a>
                   <button
