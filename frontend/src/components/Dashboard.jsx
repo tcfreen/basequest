@@ -16,13 +16,13 @@ const gBase = { background: "rgba(255,255,255,0.06)", backdropFilter: "blur(24px
 const gBlue = { background: "linear-gradient(135deg,rgba(0,82,255,0.18),rgba(0,180,255,0.10))", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid rgba(0,140,255,0.28)", borderRadius: "24px" };
 const gGold = { background: "linear-gradient(135deg,rgba(240,180,41,0.16),rgba(255,140,0,0.08))", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(240,180,41,0.30)", borderRadius: "20px" };
 
-// CSS filter strings to colorize white/black SVG icons
 const ICON_FILTERS = {
-  check:    "brightness(0) saturate(100%) invert(72%) sepia(60%) saturate(500%) hue-rotate(100deg) brightness(1.1)",  // green  #00e676
-  fire:     "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)", // amber  #f0b429
-  quests:   "brightness(0) saturate(100%) invert(60%) sepia(70%) saturate(500%) hue-rotate(190deg) brightness(1.1)",  // blue   #4da6ff
-  calendar: "brightness(0) saturate(100%) invert(65%) sepia(50%) saturate(600%) hue-rotate(240deg) brightness(1.05)", // violet #c084fc
-  trophy:   "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)", // amber  #f0b429
+  check:    "brightness(0) saturate(100%) invert(72%) sepia(60%) saturate(500%) hue-rotate(100deg) brightness(1.1)",   // #00e676
+  fire:     "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)",  // #f0b429
+  quests:   "brightness(0) saturate(100%) invert(60%) sepia(70%) saturate(500%) hue-rotate(190deg) brightness(1.1)",   // #4da6ff
+  calendar: "brightness(0) saturate(100%) invert(65%) sepia(50%) saturate(600%) hue-rotate(240deg) brightness(1.05)", // #c084fc
+  trophy:   "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)", // #f0b429
+  wave:     "brightness(0) saturate(100%) invert(60%) sepia(70%) saturate(500%) hue-rotate(190deg) brightness(1.1)",  // #4da6ff
 };
 
 export default function Dashboard({ quests, wallet, setPage }) {
@@ -78,7 +78,7 @@ export default function Dashboard({ quests, wallet, setPage }) {
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
-        <Icon src="/wave.svg" size={m ? 18 : 22} style={{ opacity: 0.85 }} />
+        <Icon src="/wave.svg" size={m ? 24 : 28} style={{ filter: ICON_FILTERS.wave }} />
         <div>
           <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px", letterSpacing: "-0.3px" }}>
             Welcome back, <span style={{ color: "#4da6ff" }}>{userProfile?.usernameSet ? userProfile.username : shortAddr(address)}</span>
@@ -141,7 +141,7 @@ export default function Dashboard({ quests, wallet, setPage }) {
               style={{ filter: ICON_FILTERS[filterKey] }}
             />
             <div className="dh" style={{ color, fontWeight: 900, fontSize: m ? "15px" : "18px", lineHeight: 1 }}>{value}</div>
-            <div style={{ color: "#4a5568", fontSize: m ? "8px" : "9px", fontWeight: 700, letterSpacing: "0.07em" }}>{label}</div>
+            <div style={{ color, fontSize: m ? "8px" : "9px", fontWeight: 700, letterSpacing: "0.07em", opacity: 0.5 }}>{label}</div>
           </div>
         ))}
       </div>
@@ -167,4 +167,4 @@ export default function Dashboard({ quests, wallet, setPage }) {
 
     </div>
   );
-            }
+          }
