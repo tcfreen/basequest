@@ -72,20 +72,20 @@ export function getBossRaidContract(s) { if (!ADDRESSES.bossraid) throw new Erro
 export function getBridgeContract(s)   { if (!ADDRESSES.bridge)   throw new Error("VITE_BRIDGE_CONTRACT not set");   return new ethers.Contract(ADDRESSES.bridge,   BRIDGE_ABI,   s); }
 
 export const LEVELS = [
-  { level: 1, name: "Newbie",  minXP: 0,     maxXP: 499,      color: "#8892a4", emoji: "🌱" },
-  { level: 2, name: "Farmer",  minXP: 500,   maxXP: 1499,     color: "#00c853", emoji: "🌾" },
-  { level: 3, name: "Builder", minXP: 1500,  maxXP: 3499,     color: "#0052ff", emoji: "🔨" },
-  { level: 4, name: "Degen",   minXP: 3500,  maxXP: 7499,     color: "#a855f7", emoji: "⚡" },
-  { level: 5, name: "OG Base", minXP: 7500,  maxXP: 14999,    color: "#00d4ff", emoji: "🔥" },
-  { level: 6, name: "Phoenix", minXP: 15000, maxXP: Infinity,  color: "#f0b429", emoji: "🦅" },
+  { level: 1, name: "Newbie",  minXP: 0,     maxXP: 499,     color: "#8892a4", icon: "/level-1.svg" },
+  { level: 2, name: "Farmer",  minXP: 500,   maxXP: 1499,    color: "#00c853", icon: "/level-2.svg" },
+  { level: 3, name: "Builder", minXP: 1500,  maxXP: 3499,    color: "#0052ff", icon: "/level-3.svg" },
+  { level: 4, name: "Degen",   minXP: 3500,  maxXP: 7499,    color: "#a855f7", icon: "/level-4.svg" },
+  { level: 5, name: "OG Base", minXP: 7500,  maxXP: 14999,   color: "#00d4ff", icon: "/level-5.svg" },
+  { level: 6, name: "Phoenix", minXP: 15000, maxXP: Infinity, color: "#f0b429", icon: "/level-6.svg" },
 ];
 
 export function getLevelInfo(xp) {
   const num = Number(xp || 0);
   for (let i = LEVELS.length - 1; i >= 0; i--) {
     if (num >= LEVELS[i].minXP) {
-      const current  = LEVELS[i];
-      const next     = LEVELS[i + 1] || null;
+      const current = LEVELS[i];
+      const next    = LEVELS[i + 1] || null;
       const progress = next ? ((num - current.minXP) / (next.minXP - current.minXP)) * 100 : 100;
       return { current, next, xp: num, progress: Math.min(progress, 100) };
     }
@@ -115,8 +115,8 @@ export async function getEthPrice() {
   const now = Date.now();
   if (_ethPrice && now - _ethPriceAt < 120000) return _ethPrice;
   try {
-    const res   = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
-    const data  = await res.json();
+    const res  = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
+    const data = await res.json();
     _ethPrice   = data.ethereum?.usd || 2500;
     _ethPriceAt = now;
     return _ethPrice;
@@ -125,27 +125,27 @@ export async function getEthPrice() {
 export function ethToUsd(ethAmount, ethPrice) { return (parseFloat(ethAmount || 0) * (ethPrice || 2500)).toFixed(2); }
 
 export const DEPLOY_PLATFORMS = [
-  { id: "deployRemix", name: "Deploy on Remix IDE", icon: "🔧", url: "https://remix.ethereum.org", xp: 50, color: "#00d4ff" },
+  { id: "deployRemix", name: "Deploy on Remix IDE", icon: "/remix.svg",     url: "https://remix.ethereum.org",                                xp: 50, color: "#00d4ff" },
 ];
 
 export const SWAP_PLATFORMS = [
-  { id: "swapAerodrome", name: "Swap on Aerodrome", icon: "✈️", url: "https://aerodrome.finance/swap",                          xp: 50, color: "#ff6b6b" },
-  { id: "swapUniswap",   name: "Swap on Uniswap",   icon: "🦄", url: "https://app.uniswap.org/#/swap?chain=base",               xp: 50, color: "#ff007a" },
-  { id: "swapJumper",    name: "Swap on Jumper",    icon: "🦗", url: "https://jumper.exchange/?fromChain=8453&toChain=8453",     xp: 50, color: "#a855f7" },
-  { id: "swapRelay",     name: "Swap on Relay",     icon: "⚡", url: "https://relay.link/swap?fromChainId=8453&toChainId=8453", xp: 50, color: "#00d4ff" },
+  { id: "swapAerodrome", name: "Swap on Aerodrome", icon: "/aerodrome.svg", url: "https://aerodrome.finance/swap",                            xp: 50, color: "#ff6b6b" },
+  { id: "swapUniswap",   name: "Swap on Uniswap",   icon: "/uniswap.svg",   url: "https://app.uniswap.org/#/swap?chain=base",                 xp: 50, color: "#ff007a" },
+  { id: "swapJumper",    name: "Swap on Jumper",     icon: "/jumper.svg",    url: "https://jumper.exchange/?fromChain=8453&toChain=8453",      xp: 50, color: "#a855f7" },
+  { id: "swapRelay",     name: "Swap on Relay",      icon: "/relay.svg",     url: "https://relay.link/swap?fromChainId=8453&toChainId=8453",  xp: 50, color: "#00d4ff" },
 ];
 
 export const BRIDGE_PLATFORMS = [
-  { id: "bridgeJumper", name: "Bridge via Jumper", icon: "🦗", url: "https://jumper.exchange/?fromChain=1&toChain=8453", xp: 50, color: "#a855f7" },
-  { id: "bridgeRelay",  name: "Bridge via Relay",  icon: "⚡", url: "https://relay.link/bridge/base",                   xp: 50, color: "#00d4ff" },
+  { id: "bridgeJumper", name: "Bridge via Jumper",   icon: "/jumper.svg",   url: "https://jumper.exchange/?fromChain=1&toChain=8453",         xp: 50, color: "#a855f7" },
+  { id: "bridgeRelay",  name: "Bridge via Relay",    icon: "/relay.svg",    url: "https://relay.link/bridge/base",                           xp: 50, color: "#00d4ff" },
 ];
 
 export const TASKS = [
-  { id: "gm",      name: "GM Base",        description: "Send a GM on-chain message",           xp: 50,  ethCost: "0.00005", icon: "☀️", daily: true,  field: null },
-  { id: "deploy",  name: "Deploy Contract", description: "Deploy a contract to Base Mainnet",    xp: 100, ethCost: "0.00005", icon: "🚀", daily: true,  field: "deployedContract", fieldLabel: "Deployed Contract Address", fieldPlaceholder: "0x...", hasSubs: true },
-  { id: "swap",    name: "Swap on Base",    description: "Swap on any Base DEX",                 xp: 75,  ethCost: "0.00005", icon: "🔄", daily: true,  field: null, hasSubs: true },
-  { id: "bridge",  name: "Bridge to Base",  description: "Bridge assets to Base",                xp: 100, ethCost: "0.00005", icon: "🌉", daily: true,  field: null, hasSubs: true },
-  { id: "game",    name: "Boss Raid",       description: "Attack the boss & win the prize pool", xp: 75,  ethCost: "0.00005", icon: "🐉", daily: true,  field: null },
-  { id: "profile", name: "Set Profile",     description: "Set your on-chain username",           xp: 50,  ethCost: "0.00005", icon: "🪪", daily: false, oneTime: true, field: "username", fieldLabel: "Username (max 32 chars)", fieldPlaceholder: "based_degen" },
-  { id: "streak",  name: "Streak Bonus",    description: "Auto-awarded every 7 days",            xp: 200, ethCost: "0",       icon: "🔥", daily: false, auto: true },
+  { id: "gm",      name: "GM Base",         description: "Send a GM on-chain message",           xp: 50,  ethCost: "0.00005", icon: "/gm.svg",      daily: true,  field: null },
+  { id: "deploy",  name: "Deploy Contract", description: "Deploy a contract to Base Mainnet",    xp: 100, ethCost: "0.00005", icon: "/deploy.svg",  daily: true,  field: "deployedContract", fieldLabel: "Deployed Contract Address", fieldPlaceholder: "0x...", hasSubs: true },
+  { id: "swap",    name: "Swap on Base",    description: "Swap on any Base DEX",                 xp: 75,  ethCost: "0.00005", icon: "/swap.svg",    daily: true,  field: null, hasSubs: true },
+  { id: "bridge",  name: "Bridge to Base",  description: "Bridge assets to Base",                xp: 100, ethCost: "0.00005", icon: "/bridge.svg",  daily: true,  field: null, hasSubs: true },
+  { id: "game",    name: "Boss Raid",       description: "Attack the boss & win the prize pool", xp: 75,  ethCost: "0.00005", icon: "/bossraid.svg",daily: true,  field: null },
+  { id: "profile", name: "Set Profile",     description: "Set your on-chain username",           xp: 50,  ethCost: "0.00005", icon: "/profile.svg", daily: false, oneTime: true, field: "username", fieldLabel: "Username (max 32 chars)", fieldPlaceholder: "based_degen" },
+  { id: "streak",  name: "Streak Bonus",    description: "Auto-awarded every 7 days",            xp: 200, ethCost: "0",       icon: "/streak.svg",  daily: false, auto: true },
 ];
