@@ -134,7 +134,7 @@ export default function WalletAnalyzer({ wallet }) {
       {/* Loading */}
       {loading && (
         <div style={{ textAlign: "center", padding: m ? "32px 0" : "48px 0", color: "#8892a4" }}>
-          <Icon src="/search.svg" size={m ? 28 : 36} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
+          <Icon src="/wallet.svg" size={m ? 28 : 36} style={{ margin: "0 auto 12px", filter: "brightness(0) invert(1)", opacity: 0.4 }} />
           <div style={{ fontSize: m ? "13px" : "14px" }}>Fetching on-chain data...</div>
         </div>
       )}
