@@ -61,22 +61,22 @@ export default function App() {
         {/* Main pages container */}
         <div
           style={{
-            display: isLeaderboard ? "none" : "flex", // hide flex container when leaderboard
-            width: "400%",
-            transform: `translateX(-${pageIndex[page] * 100}%)`, // slide full width per page
-            transition: "transform 0.35s ease"
+            display: isLeaderboard ? "none" : "flex",
+            width: "400%", // 4 pages
+            transition: "transform 0.35s ease",
+            transform: `translateX(-${pageIndex[page] * 25}%)` // move in 25% increments
           }}
         >
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "25%", flexShrink: 0 }}>
             <Dashboard quests={quests} wallet={wallet} setPage={setPage} />
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "25%", flexShrink: 0 }}>
             <QuestBoard quests={quests} wallet={wallet} />
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "25%", flexShrink: 0 }}>
             <BossRaid wallet={wallet} />
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "25%", flexShrink: 0 }}>
             <WalletAnalyzer wallet={wallet} />
           </div>
         </div>
@@ -172,4 +172,4 @@ export default function App() {
       </div>
     </div>
   );
-              }
+}
