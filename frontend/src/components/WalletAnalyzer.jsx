@@ -24,12 +24,41 @@ const SCORE_LEVELS = [
 const getScoreLevel = s => SCORE_LEVELS.find(l => s >= l.min && s <= l.max) || SCORE_LEVELS[0];
 const shortHash     = h => h ? h.slice(0, 8) + "..." + h.slice(-6) : "—";
 
+const WHITE = "brightness(0) invert(1)";
+
+const maskStyle = (src, color, size) => ({
+  display: "block", flexShrink: 0,
+  width: size, height: size,
+  backgroundColor: color,
+  WebkitMaskImage: `url(${src})`,
+  WebkitMaskSize: "contain",
+  WebkitMaskRepeat: "no-repeat",
+  WebkitMaskPosition: "center",
+  maskImage: `url(${src})`,
+  maskSize: "contain",
+  maskRepeat: "no-repeat",
+  maskPosition: "center",
+});
+
+const ColorIcon = ({ src, size = 22, color, style = {} }) => (
+  <div style={{ ...maskStyle(src, color, size), ...style }} />
+);
+
+// TX rows — icon color matches valueColor (ETH amount text)
 const TX_ROWS = [
   { key: "firstTxOnBase",    icon: "/seedling.svg", label: "First Transaction",    valueColor: "#f0b429" },
   { key: "latestTxOnBase",   icon: "/clock.svg",    label: "Latest Transaction",   valueColor: "#f0b429" },
   { key: "largestTxOnBase",  icon: "/trophy.svg",   label: "Largest Transaction",  valueColor: "#00c853" },
   { key: "smallestTxOnBase", icon: "/micro.svg",    label: "Smallest Transaction", valueColor: "#ff6b6b" },
 ];
+
+// Section header icons — color matches section title accent
+const SECTION_ICONS = {
+  milestone: { src: "/milestone.svg", color: "#4da6ff"  },
+  heatmap:   { src: "/heatmap.svg",   color: "#a78bfa"  },
+  volume:    { src: "/volume.svg",    color: "#00c853"  },
+  deploy:    { src: "/deploy.svg",    color: "#00e676"  },
+};
 
 export default function WalletAnalyzer({ wallet }) {
   const [inputAddress, setInputAddress] = useState("");
@@ -71,7 +100,7 @@ export default function WalletAnalyzer({ wallet }) {
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
-        <Icon src="/wallet.svg" size={m ? 40 : 46} style={{ filter: "brightness(0) invert(1)", opacity: 0.85 }} />
+        <Icon src="/wallet.svg" size={m ? 40 : 46} style={{ filter: WHITE }} />
         <div>
           <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>
             Wallet Analyzer
@@ -88,9 +117,8 @@ export default function WalletAnalyzer({ wallet }) {
           WALLET ADDRESS
         </label>
 
-        {/* Pill search bar */}
         <div style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 999, padding: "4px 4px 4px 14px", gap: 8 }}>
-          <Icon src="/search.svg" size={m ? 14 : 15} style={{ opacity: 0.35, flexShrink: 0 }} />
+          <Icon src="/search.svg" size={m ? 14 : 15} style={{ filter: WHITE, opacity: 0.35, flexShrink: 0 }} />
           <input
             type="text"
             placeholder="0x..."
@@ -105,19 +133,18 @@ export default function WalletAnalyzer({ wallet }) {
             style={{ background: loading ? "rgba(0,82,255,0.4)" : "linear-gradient(135deg,#0052ff,#0041cc)", border: "none", borderRadius: 999, padding: m ? "8px 14px" : "9px 18px", color: "white", fontWeight: 800, fontSize: m ? "12px" : "13px", cursor: loading ? "not-allowed" : "pointer", whiteSpace: "nowrap", fontFamily: "Syne, sans-serif", display: "flex", alignItems: "center", gap: 6, flexShrink: 0, boxShadow: "0 2px 12px rgba(0,82,255,0.3)" }}
           >
             {loading
-              ? <><Icon src="/hourglass.svg" size={13} style={{ opacity: 0.8 }} /> Analyzing</>
-              : <><Icon src="/search.svg"    size={13} style={{ opacity: 0.9 }} /> Analyze</>
+              ? <><Icon src="/hourglass.svg" size={13} style={{ filter: WHITE, opacity: 0.8 }} /> Analyzing</>
+              : <><Icon src="/search.svg"    size={13} style={{ filter: WHITE, opacity: 0.9 }} /> Analyze</>
             }
           </button>
         </div>
 
-        {/* Use connected wallet */}
         {wallet?.address && (
           <div
             onClick={() => setInputAddress(wallet.address)}
             style={{ color: "#4da6ff", fontSize: "12px", fontWeight: 600, marginTop: 10, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5 }}
           >
-            <Icon src="/wallet.svg" size={13} style={{ filter: "invert(58%) sepia(98%) saturate(500%) hue-rotate(185deg) brightness(105%)" }} />
+            <ColorIcon src="/wallet.svg" size={13} color="#4da6ff" />
             Use connected wallet
           </div>
         )}
@@ -126,7 +153,7 @@ export default function WalletAnalyzer({ wallet }) {
       {/* Error */}
       {error && (
         <div style={{ background: "rgba(255,59,59,0.1)", border: "1px solid rgba(255,59,59,0.3)", borderRadius: 12, padding: "11px 14px", marginBottom: 12, color: "#ff6b6b", fontWeight: 600, fontSize: m ? "12px" : "13px", display: "flex", alignItems: "center", gap: 8 }}>
-          <Icon src="/warning.svg" size={16} />
+          <ColorIcon src="/warning.svg" size={18} color="#ff6b6b" />
           {error}
         </div>
       )}
@@ -134,7 +161,7 @@ export default function WalletAnalyzer({ wallet }) {
       {/* Loading */}
       {loading && (
         <div style={{ textAlign: "center", padding: m ? "32px 0" : "48px 0", color: "#8892a4" }}>
-          <Icon src="/wallet.svg" size={m ? 28 : 36} style={{ margin: "0 auto 12px", filter: "brightness(0) invert(1)", opacity: 0.4 }} />
+          <Icon src="/wallet.svg" size={m ? 28 : 36} style={{ margin: "0 auto 12px", filter: WHITE, opacity: 0.4 }} />
           <div style={{ fontSize: m ? "13px" : "14px" }}>Fetching on-chain data...</div>
         </div>
       )}
@@ -156,7 +183,7 @@ export default function WalletAnalyzer({ wallet }) {
             </div>
           </div>
 
-          {/* Stats grid */}
+          {/* Stats grid — icon color + size matches value color */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: m ? 7 : 10 }}>
             {[
               { icon: "/swap.svg",     label: "TOTAL TXS",  value: analysis.totalTxs.toLocaleString(), color: "#4da6ff" },
@@ -164,10 +191,11 @@ export default function WalletAnalyzer({ wallet }) {
               { icon: "/deploy.svg",   label: "CONTRACTS",  value: analysis.uniqueContracts,            color: "#00e676" },
               { icon: "/warning.svg",  label: "FAILED TXS", value: analysis.failedCount,                color: "#ff6b6b" },
             ].map(({ icon, label, value, color }) => (
-              <div key={label} style={{ ...gBase, padding: m ? "13px 10px" : "16px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: m ? 4 : 6 }}>
-                <Icon src={icon} size={m ? 18 : 22} style={{ opacity: 0.8 }} />
+              <div key={label} style={{ ...gBase, padding: m ? "13px 10px" : "16px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: m ? 6 : 8 }}>
+                {/* Size bumped: 18/22 → 28/32, color exact match to value */}
+                <ColorIcon src={icon} size={m ? 28 : 32} color={color} style={{ margin: "0 auto" }} />
                 <div className="dh" style={{ color, fontWeight: 900, fontSize: m ? "17px" : "20px", lineHeight: 1 }}>{value}</div>
-                <div style={{ color: "#4a5568", fontSize: m ? "9px" : "10px", fontWeight: 700, letterSpacing: "0.07em" }}>{label}</div>
+                <div style={{ color, fontSize: m ? "9px" : "10px", fontWeight: 700, letterSpacing: "0.07em", opacity: 0.5 }}>{label}</div>
               </div>
             ))}
           </div>
@@ -175,7 +203,8 @@ export default function WalletAnalyzer({ wallet }) {
           {/* Transaction Milestones */}
           <div style={{ ...gBase, padding: m ? "14px" : "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: m ? 12 : 16 }}>
-              <Icon src="/milestone.svg" size={m ? 16 : 18} style={{ opacity: 0.85 }} />
+              {/* Section header icon: 16/18 → 22/26 */}
+              <ColorIcon src={SECTION_ICONS.milestone.src} size={m ? 22 : 26} color={SECTION_ICONS.milestone.color} />
               <div className="dh" style={{ color: "white", fontSize: m ? "13px" : "15px", fontWeight: 800 }}>Transaction Milestones</div>
             </div>
             {TX_ROWS.map(({ key, icon, label, valueColor }, idx) => {
@@ -184,7 +213,8 @@ export default function WalletAnalyzer({ wallet }) {
               return (
                 <div key={key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: isLast ? 0 : 12, marginBottom: isLast ? 0 : 12, borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.05)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-                    <Icon src={icon} size={m ? 15 : 17} style={{ opacity: 0.75, flexShrink: 0 }} />
+                    {/* Row icons: 15/17 → 20/24, color = valueColor */}
+                    <ColorIcon src={icon} size={m ? 20 : 24} color={valueColor} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ color: "#8892a4", fontSize: m ? "10px" : "11px", fontWeight: 600, marginBottom: 2 }}>{label}</div>
                       <div className="dh" style={{ color: "white", fontSize: m ? "12px" : "13px", fontWeight: 700 }}>{tx?.date || "—"}</div>
@@ -205,7 +235,7 @@ export default function WalletAnalyzer({ wallet }) {
           {/* Activity Heatmap */}
           <div style={{ ...gBase, padding: m ? "14px" : "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: m ? 12 : 16 }}>
-              <Icon src="/heatmap.svg" size={m ? 16 : 18} style={{ opacity: 0.85 }} />
+              <ColorIcon src={SECTION_ICONS.heatmap.src} size={m ? 22 : 26} color={SECTION_ICONS.heatmap.color} />
               <div className="dh" style={{ color: "white", fontSize: m ? "13px" : "15px", fontWeight: 800 }}>Activity Heatmap (90 days)</div>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: m ? "2px" : "3px", marginBottom: 10 }}>
@@ -224,7 +254,7 @@ export default function WalletAnalyzer({ wallet }) {
           {/* Volume */}
           <div style={{ ...gBase, padding: m ? "14px" : "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: m ? 12 : 16 }}>
-              <Icon src="/volume.svg" size={m ? 16 : 18} style={{ opacity: 0.85 }} />
+              <ColorIcon src={SECTION_ICONS.volume.src} size={m ? 22 : 26} color={SECTION_ICONS.volume.color} />
               <div className="dh" style={{ color: "white", fontSize: m ? "13px" : "15px", fontWeight: 800 }}>Volume</div>
             </div>
             {[
@@ -243,7 +273,7 @@ export default function WalletAnalyzer({ wallet }) {
           {analysis.topContracts.length > 0 && (
             <div style={{ ...gBase, padding: m ? "14px" : "20px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: m ? 12 : 16 }}>
-                <Icon src="/deploy.svg" size={m ? 16 : 18} style={{ opacity: 0.85 }} />
+                <ColorIcon src={SECTION_ICONS.deploy.src} size={m ? 22 : 26} color={SECTION_ICONS.deploy.color} />
                 <div className="dh" style={{ color: "white", fontSize: m ? "13px" : "15px", fontWeight: 800 }}>Top Contracts</div>
               </div>
               {analysis.topContracts.map(({ contract, count }) => (
@@ -264,4 +294,4 @@ export default function WalletAnalyzer({ wallet }) {
       )}
     </div>
   );
-}
+                       }
