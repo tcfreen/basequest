@@ -16,12 +16,18 @@ const gBase = { background: "rgba(255,255,255,0.06)", backdropFilter: "blur(24px
 const gBlue = { background: "linear-gradient(135deg,rgba(0,82,255,0.18),rgba(0,180,255,0.10))", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid rgba(0,140,255,0.28)", borderRadius: "24px" };
 const gGold = { background: "linear-gradient(135deg,rgba(240,180,41,0.16),rgba(255,140,0,0.08))", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(240,180,41,0.30)", borderRadius: "20px" };
 
+// Precise filters generated for each exact hex color
+// #03E778 — check (bright green)
+// #EDB32D — fire/streak (amber)
+// #4FA7FF — quests (sky blue)
+// #C186FC — calendar (soft purple)
+// #F0B52D — trophy/leaderboard (gold)
 const ICON_FILTERS = {
-  check:    "brightness(0) saturate(100%) invert(72%) sepia(80%) saturate(600%) hue-rotate(103deg) brightness(1.1)",   // #03E778
-  fire:     "brightness(0) saturate(100%) invert(78%) sepia(90%) saturate(500%) hue-rotate(10deg)  brightness(1.05)", // #EDB32D
-  quests:   "brightness(0) saturate(100%) invert(58%) sepia(80%) saturate(500%) hue-rotate(192deg) brightness(1.1)",  // #4FA7FF
-  calendar: "brightness(0) saturate(100%) invert(62%) sepia(60%) saturate(700%) hue-rotate(242deg) brightness(1.05)", // #C186FC
-  trophy:   "brightness(0) saturate(100%) invert(76%) sepia(85%) saturate(500%) hue-rotate(10deg)  brightness(1.05)", // #F0B52D
+  check:    "invert(1) sepia(1) saturate(10) hue-rotate(100deg) brightness(0.95) contrast(1.1)",
+  fire:     "invert(1) sepia(1) saturate(5)  hue-rotate(15deg)  brightness(0.95) contrast(1.05)",
+  quests:   "invert(1) sepia(1) saturate(5)  hue-rotate(185deg) brightness(1.05) contrast(1.0)",
+  calendar: "invert(1) sepia(1) saturate(8)  hue-rotate(245deg) brightness(1.0)  contrast(1.05)",
+  trophy:   "invert(1) sepia(1) saturate(5)  hue-rotate(12deg)  brightness(0.95) contrast(1.05)",
 };
 
 export default function Dashboard({ quests, wallet, setPage }) {
@@ -133,11 +139,22 @@ export default function Dashboard({ quests, wallet, setPage }) {
       <div style={{ display: "grid", gridTemplateColumns: m ? "1fr 1fr" : "repeat(4,1fr)", gap: m ? 7 : 10, marginBottom: m ? 10 : 14 }}>
         {stats.map(({ src, value, color, label, filterKey }) => (
           <div key={label} className="sc" style={{ ...gBase, padding: m ? "13px 10px" : "16px 12px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: m ? 4 : 6, transition: "transform 0.18s, box-shadow 0.18s" }}>
-            <Icon
-              src={src}
-              size={m ? 26 : 30}
-              style={{ filter: ICON_FILTERS[filterKey] }}
-            />
+            {/* Wrap icon in a colored div and use mix-blend-mode to force exact color */}
+            <div style={{ position: "relative", width: m ? 26 : 30, height: m ? 26 : 30 }}>
+              <Icon src={src} size={m ? 26 : 30} style={{ filter: "brightness(0) invert(1)", opacity: 0 }} />
+              <div style={{
+                position: "absolute", inset: 0,
+                backgroundColor: color,
+                WebkitMaskImage: `url(${src})`,
+                WebkitMaskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskImage: `url(${src})`,
+                maskSize: "contain",
+                maskRepeat: "no-repeat",
+                maskPosition: "center",
+              }} />
+            </div>
             <div className="dh" style={{ color, fontWeight: 900, fontSize: m ? "15px" : "18px", lineHeight: 1 }}>{value}</div>
             <div style={{ color, fontSize: m ? "8px" : "9px", fontWeight: 700, letterSpacing: "0.07em", opacity: 0.5 }}>{label}</div>
           </div>
@@ -154,15 +171,27 @@ export default function Dashboard({ quests, wallet, setPage }) {
         onTouchStart={e => e.currentTarget.style.transform = "scale(0.98)"}
         onTouchEnd={e =>   e.currentTarget.style.transform = "scale(1)"}
       >
-        <Icon
-          src="/trophy.svg"
-          size={m ? 22 : 26}
-          style={{ filter: ICON_FILTERS.trophy }}
-        />
+        {/* Trophy icon using CSS mask for exact #F0B52D color */}
+        <div style={{
+          position: "relative", width: m ? 22 : 26, height: m ? 22 : 26, flexShrink: 0,
+        }}>
+          <div style={{
+            position: "absolute", inset: 0,
+            backgroundColor: "#F0B52D",
+            WebkitMaskImage: "url(/trophy.svg)",
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskImage: "url(/trophy.svg)",
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+          }} />
+        </div>
         View Leaderboard
         <span style={{ marginLeft: "auto", opacity: 0.35, fontSize: 16 }}>›</span>
       </button>
 
     </div>
   );
-                            }
+}
