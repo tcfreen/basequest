@@ -14,6 +14,16 @@ const FONTS = `
 const gBase  = { background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px" };
 const gGreen = { background: "rgba(0,200,83,0.06)",    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(0,200,83,0.18)",    borderRadius: "16px" };
 
+const TASK_COLORS = {
+  gm:      "#38BDF8", // sky blue      — friendly morning energy
+  deploy:  "#A78BFA", // soft violet   — technical / builder
+  swap:    "#34D399", // emerald green — finance / liquidity
+  bridge:  "#FB923C", // warm orange   — cross-chain movement
+  game:    "#F472B6", // rose pink     — game / raid excitement
+  profile: "#60A5FA", // calm blue     — identity / personal
+  streak:  "#FBBF24", // amber gold    — reward / achievement
+};
+
 const REMIX_GUIDE = [
   { step: "1",  title: "Open Remix IDE",          desc: "Go to remix.ethereum.org in your browser." },
   { step: "2",  title: "Create a new file",        desc: 'Click the file icon. Name it e.g. "MyContract.sol".' },
@@ -196,6 +206,7 @@ export default function QuestBoard({ quests, wallet }) {
         {TASKS.map(task => {
           const isDone   = getTaskStatus(task.id).done;
           const expanded = expandedTask === task.id;
+          const iconColor = TASK_COLORS[task.id] || "#8892a4";
 
           return (
             <div key={task.id} style={{ ...(isDone ? gGreen : gBase), overflow: "hidden", transition: "all 0.2s" }}>
@@ -205,8 +216,18 @@ export default function QuestBoard({ quests, wallet }) {
                 onClick={() => !task.auto && !isDone && setExpandedTask(expanded ? null : task.id)}
                 style={{ padding: m ? "12px 14px" : "14px 18px", display: "flex", alignItems: "center", gap: m ? 10 : 14, cursor: task.auto || isDone ? "default" : "pointer" }}
               >
-                <div style={{ width: m ? 38 : 44, height: m ? 38 : 44, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: isDone ? "rgba(0,200,83,0.15)" : "rgba(255,255,255,0.06)", borderRadius: m ? 10 : 12 }}>
-                  <Icon src={task.icon} size={m ? 20 : 24} />
+                <div style={{
+                  width: m ? 38 : 44, height: m ? 38 : 44, flexShrink: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: isDone ? "rgba(0,200,83,0.15)" : `${iconColor}18`,
+                  border: `1px solid ${isDone ? "rgba(0,200,83,0.3)" : iconColor + "35"}`,
+                  borderRadius: m ? 10 : 12,
+                }}>
+                  <Icon
+                    src={task.icon}
+                    size={m ? 20 : 24}
+                    style={{ filter: isDone ? "none" : `drop-shadow(0 0 4px ${iconColor}88)` }}
+                  />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -276,4 +297,4 @@ export default function QuestBoard({ quests, wallet }) {
       </div>
     </div>
   );
-}
+        }
