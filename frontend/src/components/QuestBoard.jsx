@@ -15,14 +15,31 @@ const gBase  = { background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20p
 const gGreen = { background: "rgba(0,200,83,0.06)",    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(0,200,83,0.18)",    borderRadius: "16px" };
 
 const TASK_COLORS = {
-  gm:      "#38BDF8", // sky blue      — friendly morning energy
-  deploy:  "#A78BFA", // soft violet   — technical / builder
-  swap:    "#34D399", // emerald green — finance / liquidity
-  bridge:  "#FB923C", // warm orange   — cross-chain movement
-  game:    "#F472B6", // rose pink     — game / raid excitement
-  profile: "#60A5FA", // calm blue     — identity / personal
-  streak:  "#FBBF24", // amber gold    — reward / achievement
+  gm:      "#38BDF8", // sky blue
+  deploy:  "#A78BFA", // soft violet
+  swap:    "#34D399", // emerald green
+  bridge:  "#FB923C", // warm orange
+  game:    "#F472B6", // rose pink
+  profile: "#60A5FA", // calm blue
+  streak:  "#FBBF24", // amber gold
 };
+
+// Converts a hex color to a CSS filter that colorizes a white/black SVG icon
+function hexToFilter(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  // Approximate filter using sepia + saturate + hue-rotate
+  const hue = Math.round(Math.atan2(
+    Math.sqrt(3) * (g - b),
+    2 * r - g - b
+  ) * (180 / Math.PI));
+  return `brightness(0) saturate(100%) invert(1) sepia(1) saturate(5) hue-rotate(${hue}deg) brightness(0.95)`;
+}
+
+const TASK_FILTERS = Object.fromEntries(
+  Object.entries(TASK_COLORS).map(([id, hex]) => [id, hexToFilter(hex)])
+);
 
 const REMIX_GUIDE = [
   { step: "1",  title: "Open Remix IDE",          desc: "Go to remix.ethereum.org in your browser." },
@@ -109,7 +126,6 @@ export default function QuestBoard({ quests, wallet }) {
             );
           })}
 
-          {/* Remix guide under deploy subs */}
           {groupId === "deploy" && (
             <div style={{ marginTop: 4 }}>
               <div
@@ -204,9 +220,10 @@ export default function QuestBoard({ quests, wallet }) {
       {/* Quest list */}
       <div style={{ display: "flex", flexDirection: "column", gap: m ? 8 : 10 }}>
         {TASKS.map(task => {
-          const isDone   = getTaskStatus(task.id).done;
-          const expanded = expandedTask === task.id;
-          const iconColor = TASK_COLORS[task.id] || "#8892a4";
+          const isDone     = getTaskStatus(task.id).done;
+          const expanded   = expandedTask === task.id;
+          const iconColor  = TASK_COLORS[task.id]  || "#8892a4";
+          const iconFilter = TASK_FILTERS[task.id] || "none";
 
           return (
             <div key={task.id} style={{ ...(isDone ? gGreen : gBase), overflow: "hidden", transition: "all 0.2s" }}>
@@ -226,7 +243,11 @@ export default function QuestBoard({ quests, wallet }) {
                   <Icon
                     src={task.icon}
                     size={m ? 20 : 24}
-                    style={{ filter: isDone ? "none" : `drop-shadow(0 0 4px ${iconColor}88)` }}
+                    style={{
+                      filter: isDone
+                        ? "brightness(0) saturate(100%) invert(52%) sepia(98%) saturate(400%) hue-rotate(90deg)"
+                        : iconFilter,
+                    }}
                   />
                 </div>
 
@@ -297,4 +318,4 @@ export default function QuestBoard({ quests, wallet }) {
       </div>
     </div>
   );
-        }
+                                                    }
