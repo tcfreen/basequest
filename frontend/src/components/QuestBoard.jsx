@@ -151,7 +151,7 @@ export default function QuestBoard({ quests, wallet }) {
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
-        <Icon src="/quests.svg" size={m ? 22 : 28} style={{ filter: "brightness(0) invert(1) opacity(1)" }} />
+        <Icon src="/quests.svg" size={m ? 26 : 34} style={{ filter: "brightness(0) invert(1) opacity(1)" }} />
         <div>
           <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>Quest Board</h2>
           <p className="db" style={{ color: "#5a6478", fontSize: m ? "10px" : "11px", margin: 0, fontWeight: 600, letterSpacing: "0.07em" }}>
