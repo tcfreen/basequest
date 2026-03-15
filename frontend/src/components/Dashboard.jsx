@@ -16,6 +16,15 @@ const gBase = { background: "rgba(255,255,255,0.06)", backdropFilter: "blur(24px
 const gBlue = { background: "linear-gradient(135deg,rgba(0,82,255,0.18),rgba(0,180,255,0.10))", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid rgba(0,140,255,0.28)", borderRadius: "24px" };
 const gGold = { background: "linear-gradient(135deg,rgba(240,180,41,0.16),rgba(255,140,0,0.08))", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(240,180,41,0.30)", borderRadius: "20px" };
 
+// CSS filter strings to colorize white/black SVG icons
+const ICON_FILTERS = {
+  check:    "brightness(0) saturate(100%) invert(72%) sepia(60%) saturate(500%) hue-rotate(100deg) brightness(1.1)",  // green  #00e676
+  fire:     "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)", // amber  #f0b429
+  quests:   "brightness(0) saturate(100%) invert(60%) sepia(70%) saturate(500%) hue-rotate(190deg) brightness(1.1)",  // blue   #4da6ff
+  calendar: "brightness(0) saturate(100%) invert(65%) sepia(50%) saturate(600%) hue-rotate(240deg) brightness(1.05)", // violet #c084fc
+  trophy:   "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)", // amber  #f0b429
+};
+
 export default function Dashboard({ quests, wallet, setPage }) {
   const { address, isConnected } = wallet;
   const { userProfile, completedCount, totalDaily, loading } = quests;
@@ -56,12 +65,12 @@ export default function Dashboard({ quests, wallet, setPage }) {
   );
 
   const stats = [
-    { src: "/check.svg",    value: userProfile?.tasksCompleted?.toLocaleString() ?? "0", color: "#00e676", label: "TASKS DONE"    },
-    { src: "/fire.svg",     value: userProfile?.streakCount ?? "0",                       color: "#f0b429", label: "DAY STREAK"   },
-    { src: "/quests.svg",      value: `${completedCount}/${totalDaily}`,                     color: "#4da6ff", label: "DAILY QUESTS" },
+    { src: "/check.svg",    value: userProfile?.tasksCompleted?.toLocaleString() ?? "0", color: "#00e676", label: "TASKS DONE",    filterKey: "check"    },
+    { src: "/fire.svg",     value: userProfile?.streakCount ?? "0",                       color: "#f0b429", label: "DAY STREAK",   filterKey: "fire"     },
+    { src: "/quests.svg",   value: `${completedCount}/${totalDaily}`,                     color: "#4da6ff", label: "DAILY QUESTS", filterKey: "quests"   },
     { src: "/calendar.svg", value: userProfile?.joinedAt
         ? new Date(userProfile.joinedAt * 1000).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-        : "—",                                                                             color: "#c084fc", label: "MEMBER SINCE" },
+        : "—",                                                                             color: "#c084fc", label: "MEMBER SINCE", filterKey: "calendar" },
   ];
 
   return (
@@ -124,9 +133,13 @@ export default function Dashboard({ quests, wallet, setPage }) {
 
       {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: m ? "1fr 1fr" : "repeat(4,1fr)", gap: m ? 7 : 10, marginBottom: m ? 10 : 14 }}>
-        {stats.map(({ src, value, color, label }) => (
+        {stats.map(({ src, value, color, label, filterKey }) => (
           <div key={label} className="sc" style={{ ...gBase, padding: m ? "13px 10px" : "16px 12px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: m ? 4 : 6, transition: "transform 0.18s, box-shadow 0.18s" }}>
-            <Icon src={src} size={m ? 18 : 22} style={{ opacity: 0.8 }} />
+            <Icon
+              src={src}
+              size={m ? 26 : 30}
+              style={{ filter: ICON_FILTERS[filterKey] }}
+            />
             <div className="dh" style={{ color, fontWeight: 900, fontSize: m ? "15px" : "18px", lineHeight: 1 }}>{value}</div>
             <div style={{ color: "#4a5568", fontSize: m ? "8px" : "9px", fontWeight: 700, letterSpacing: "0.07em" }}>{label}</div>
           </div>
@@ -143,11 +156,15 @@ export default function Dashboard({ quests, wallet, setPage }) {
         onTouchStart={e => e.currentTarget.style.transform = "scale(0.98)"}
         onTouchEnd={e =>   e.currentTarget.style.transform = "scale(1)"}
       >
-        <Icon src="/trophy.svg" size={m ? 16 : 18} style={{ opacity: 0.9 }} />
+        <Icon
+          src="/trophy.svg"
+          size={m ? 22 : 26}
+          style={{ filter: ICON_FILTERS.trophy }}
+        />
         View Leaderboard
         <span style={{ marginLeft: "auto", opacity: 0.35, fontSize: 16 }}>›</span>
       </button>
 
     </div>
   );
-}
+            }
