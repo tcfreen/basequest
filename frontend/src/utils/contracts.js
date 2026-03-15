@@ -72,12 +72,12 @@ export function getBossRaidContract(s) { if (!ADDRESSES.bossraid) throw new Erro
 export function getBridgeContract(s)   { if (!ADDRESSES.bridge)   throw new Error("VITE_BRIDGE_CONTRACT not set");   return new ethers.Contract(ADDRESSES.bridge,   BRIDGE_ABI,   s); }
 
 export const LEVELS = [
-  { level: 1, name: "Newbie",  minXP: 0,     maxXP: 499,     color: "#8892a4", icon: "/level-1.svg" },
-  { level: 2, name: "Farmer",  minXP: 500,   maxXP: 1499,    color: "#00c853", icon: "/level-2.svg" },
-  { level: 3, name: "Builder", minXP: 1500,  maxXP: 3499,    color: "#0052ff", icon: "/level-3.svg" },
-  { level: 4, name: "Degen",   minXP: 3500,  maxXP: 7499,    color: "#a855f7", icon: "/level-4.svg" },
-  { level: 5, name: "OG Base", minXP: 7500,  maxXP: 14999,   color: "#00d4ff", icon: "/level-5.svg" },
-  { level: 6, name: "Phoenix", minXP: 15000, maxXP: Infinity, color: "#f0b429", icon: "/level-6.svg" },
+  { level: 1, name: "Newbie",  minXP: 0,     maxXP: 499,      color: "#4CAF50", filter: "none",                                icon: "/level-1.svg" },
+  { level: 2, name: "Farmer",  minXP: 500,   maxXP: 1499,     color: "#2196F3", filter: "drop-shadow(0 0 2px currentColor)",   icon: "/level-2.svg" },
+  { level: 3, name: "Builder", minXP: 1500,  maxXP: 3499,     color: "#FF9800", filter: "drop-shadow(0 0 4px currentColor)",   icon: "/level-3.svg" },
+  { level: 4, name: "Degen",   minXP: 3500,  maxXP: 7499,     color: "#9C27B0", filter: "drop-shadow(0 0 6px currentColor)",   icon: "/level-4.svg" },
+  { level: 5, name: "OG Base", minXP: 7500,  maxXP: 14999,    color: "#F44336", filter: "drop-shadow(0 0 8px currentColor)",   icon: "/level-5.svg" },
+  { level: 6, name: "Phoenix", minXP: 15000, maxXP: Infinity,  color: "#FFD700", filter: "drop-shadow(0 0 12px currentColor)",  icon: "/level-6.svg" },
 ];
 
 export function getLevelInfo(xp) {
