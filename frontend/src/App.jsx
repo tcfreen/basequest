@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWallet } from "./hooks/useWallet";
 import { useQuests } from "./hooks/useQuests";
 import Navbar from "./components/Navbar";
@@ -21,6 +21,8 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [highlightPosition, setHighlightPosition] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const containerRef = useRef(null);
 
   const wallet = useWallet();
   const quests = useQuests(wallet);
@@ -36,6 +38,18 @@ export default function App() {
 
   const isLeaderboard = page === "leaderboard";
 
+  // Update container width on resize
+  useEffect(() => {
+    function updateWidth() {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    }
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
   return (
     <div
       style={{
@@ -49,6 +63,7 @@ export default function App() {
       <Navbar wallet={walletWithProfile} />
 
       <div
+        ref={containerRef}
         style={{
           maxWidth: "1100px",
           margin: "0 auto",
@@ -62,20 +77,21 @@ export default function App() {
         <div
           style={{
             display: isLeaderboard ? "none" : "flex",
+            width: "max-content",
             transition: "transform 0.35s ease",
-            transform: `translateX(-${pageIndex[page] * 100}vw)` // slide full viewport width
+            transform: `translateX(-${pageIndex[page] * containerWidth}px)`
           }}
         >
-          <div style={{ width: "100vw", flexShrink: 0 }}>
+          <div style={{ minWidth: "100%", flexShrink: 0 }}>
             <Dashboard quests={quests} wallet={wallet} setPage={setPage} />
           </div>
-          <div style={{ width: "100vw", flexShrink: 0 }}>
+          <div style={{ minWidth: "100%", flexShrink: 0 }}>
             <QuestBoard quests={quests} wallet={wallet} />
           </div>
-          <div style={{ width: "100vw", flexShrink: 0 }}>
+          <div style={{ minWidth: "100%", flexShrink: 0 }}>
             <BossRaid wallet={wallet} />
           </div>
-          <div style={{ width: "100vw", flexShrink: 0 }}>
+          <div style={{ minWidth: "100%", flexShrink: 0 }}>
             <WalletAnalyzer wallet={wallet} />
           </div>
         </div>
