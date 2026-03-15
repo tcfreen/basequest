@@ -22,6 +22,8 @@ const RANK_STYLES = {
   3: { border: "rgba(205,127,50,0.3)",  bg: "rgba(205,127,50,0.04)",  icon: "/bronze.svg" },
 };
 
+const WHITE_FILTER = "brightness(0) invert(1)";
+
 export default function Leaderboard({ wallet }) {
   const { address } = wallet;
   const { entries, loading, error, totalUsers, myRank, lastUpdated, refresh } = useLeaderboard(address);
@@ -46,7 +48,7 @@ export default function Leaderboard({ wallet }) {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: m ? 14 : 20, gap: 12, flexWrap: "wrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-          <Icon src="/trophy.svg" size={m ? 18 : 22} style={{ opacity: 0.85 }} />
+          <Icon src="/trophy.svg" size={m ? 40 : 46} style={{ filter: WHITE_FILTER }} />
           <div>
             <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>Leaderboard</h2>
             <p className="db" style={{ color: "#5a6478", fontSize: m ? "10px" : "11px", margin: 0, fontWeight: 600, letterSpacing: "0.07em" }}>
@@ -60,7 +62,7 @@ export default function Leaderboard({ wallet }) {
           disabled={loading}
           style={{ ...gBase, padding: m ? "7px 12px" : "8px 16px", color: loading ? "#5a6478" : "white", fontWeight: 700, fontSize: m ? "12px" : "13px", cursor: loading ? "not-allowed" : "pointer", border: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 6, fontFamily: "DM Sans, sans-serif" }}
         >
-          <Icon src="/refresh.svg" size={13} style={{ opacity: loading ? 0.4 : 0.8, transition: "opacity 0.2s" }} />
+          <Icon src="/refresh.svg" size={13} style={{ filter: loading ? "brightness(0) invert(0.35)" : WHITE_FILTER, transition: "filter 0.2s" }} />
           {loading ? "Loading..." : "Refresh"}
         </button>
       </div>
@@ -80,7 +82,7 @@ export default function Leaderboard({ wallet }) {
       {/* Error */}
       {error && (
         <div style={{ ...gBase, padding: m ? "20px" : "24px", textAlign: "center", marginBottom: m ? 10 : 14 }}>
-          <Icon src="/warning.svg" size={32} style={{ margin: "0 auto 10px", opacity: 0.5 }} />
+          <Icon src="/warning.svg" size={32} style={{ margin: "0 auto 10px", filter: WHITE_FILTER }} />
           <div className="db" style={{ color: "#8892a4", fontSize: m ? "13px" : "14px" }}>
             Unable to load leaderboard — tap Refresh to try again.
           </div>
@@ -166,4 +168,4 @@ export default function Leaderboard({ wallet }) {
       )}
     </div>
   );
-                }
+                       }
