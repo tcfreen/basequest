@@ -18,7 +18,6 @@ const TABS = [
 const ICON_BLUE = "#0082FF";
 
 export default function App() {
-
   const [page, setPage] = useState("dashboard");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [highlightPosition, setHighlightPosition] = useState(0);
@@ -47,7 +46,6 @@ export default function App() {
         overflowX: "hidden"
       }}
     >
-
       <Navbar wallet={walletWithProfile} />
 
       <div
@@ -56,21 +54,19 @@ export default function App() {
           margin: "0 auto",
           padding: "0 16px 100px",
           overflow: "hidden",
-          position: "relative"
+          position: "relative",
+          width: "100%"
         }}
       >
-
+        {/* Main pages container */}
         <div
           style={{
-            display: "flex",
+            display: isLeaderboard ? "none" : "flex", // hide flex container when leaderboard
             width: "400%",
-            transform: isLeaderboard
-              ? "translateX(100%)"
-              : `translateX(-${pageIndex[page] * 25}%)`,
+            transform: `translateX(-${pageIndex[page] * 25}%)`,
             transition: "transform 0.35s ease"
           }}
         >
-
           <div style={{ width: "25%" }}>
             <Dashboard quests={quests} wallet={wallet} setPage={setPage} />
           </div>
@@ -86,23 +82,24 @@ export default function App() {
           <div style={{ width: "25%" }}>
             <WalletAnalyzer wallet={wallet} />
           </div>
-
         </div>
 
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: isLeaderboard ? "0%" : "-100%",
-            width: "100%",
-            transition: "left 0.35s ease"
-          }}
-        >
-          <Leaderboard wallet={wallet} />
-        </div>
-
+        {/* Leaderboard overlay */}
+        {isLeaderboard && (
+          <div
+            style={{
+              width: "100%",
+              position: "relative",
+              left: 0,
+              transition: "left 0.35s ease"
+            }}
+          >
+            <Leaderboard wallet={wallet} />
+          </div>
+        )}
       </div>
 
+      {/* Mobile nav */}
       <div
         className="mobile-nav"
         style={{
@@ -121,7 +118,6 @@ export default function App() {
           zIndex: 100
         }}
       >
-
         <div
           style={{
             position: "absolute",
@@ -137,7 +133,6 @@ export default function App() {
         />
 
         {TABS.map((tab, index) => (
-
           <div
             key={tab.id}
             onClick={() => {
@@ -154,7 +149,6 @@ export default function App() {
               cursor: "pointer"
             }}
           >
-
             <img
               src={tab.icon}
               alt={tab.label}
@@ -167,7 +161,6 @@ export default function App() {
                     : "invert(100%)"
               }}
             />
-
             <span
               style={{
                 fontSize: "10px",
@@ -177,13 +170,9 @@ export default function App() {
             >
               {tab.label}
             </span>
-
           </div>
-
         ))}
-
       </div>
-
     </div>
   );
 }
