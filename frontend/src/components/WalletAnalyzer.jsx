@@ -117,7 +117,7 @@ export default function WalletAnalyzer({ wallet }) {
             onClick={() => setInputAddress(wallet.address)}
             style={{ color: "#4da6ff", fontSize: "12px", fontWeight: 600, marginTop: 10, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5 }}
           >
-            <Icon src="/wallet.svg" size={13} style={{ opacity: 0.8 }} />
+            <Icon src="/wallet.svg" size={13} style={{ filter: "invert(58%) sepia(98%) saturate(500%) hue-rotate(185deg) brightness(105%)" }} />
             Use connected wallet
           </div>
         )}
