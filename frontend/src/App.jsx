@@ -28,29 +28,12 @@ export default function App() {
 
   const walletWithProfile = { ...wallet, userProfile: quests.userProfile };
 
-  const renderPage = () => {
-
-    if (page === "dashboard") {
-      return <Dashboard quests={quests} wallet={wallet} setPage={setPage} />;
-    }
-
-    if (page === "quests") {
-      return <QuestBoard quests={quests} wallet={wallet} />;
-    }
-
-    if (page === "bossraid") {
-      return <BossRaid wallet={wallet} />;
-    }
-
-    if (page === "leaderboard") {
-      return <Leaderboard wallet={wallet} />;
-    }
-
-    if (page === "analyzer") {
-      return <WalletAnalyzer wallet={wallet} />;
-    }
-
-    return <Dashboard quests={quests} wallet={wallet} setPage={setPage} />;
+  const pageIndex = {
+    dashboard: 0,
+    quests: 1,
+    bossraid: 2,
+    analyzer: 3,
+    leaderboard: 4
   };
 
   return (
@@ -59,7 +42,8 @@ export default function App() {
         minHeight: "100vh",
         background: "#0a0b0f",
         color: "white",
-        fontFamily: "'Inter', sans-serif"
+        fontFamily: "'Inter', sans-serif",
+        overflowX: "hidden"
       }}
     >
 
@@ -69,10 +53,42 @@ export default function App() {
         style={{
           maxWidth: "1100px",
           margin: "0 auto",
-          padding: "0 16px 100px"
+          padding: "0 16px 100px",
+          overflow: "hidden"
         }}
       >
-        {renderPage()}
+
+        <div
+          style={{
+            display: "flex",
+            width: "500%",
+            transform: `translateX(-${pageIndex[page] * 20}%)`,
+            transition: "transform 0.35s ease"
+          }}
+        >
+
+          <div style={{ width: "20%" }}>
+            <Dashboard quests={quests} wallet={wallet} setPage={setPage} />
+          </div>
+
+          <div style={{ width: "20%" }}>
+            <QuestBoard quests={quests} wallet={wallet} />
+          </div>
+
+          <div style={{ width: "20%" }}>
+            <BossRaid wallet={wallet} />
+          </div>
+
+          <div style={{ width: "20%" }}>
+            <WalletAnalyzer wallet={wallet} />
+          </div>
+
+          <div style={{ width: "20%" }}>
+            <Leaderboard wallet={wallet} />
+          </div>
+
+        </div>
+
       </div>
 
       <div
@@ -109,6 +125,7 @@ export default function App() {
         />
 
         {TABS.map((tab, index) => (
+
           <div
             key={tab.id}
             onClick={() => {
@@ -150,6 +167,7 @@ export default function App() {
             </span>
 
           </div>
+
         ))}
 
       </div>
