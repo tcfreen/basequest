@@ -1,189 +1,152 @@
-import { useState } from "react";
-import { useWallet } from "./hooks/useWallet";
-import { useQuests } from "./hooks/useQuests";
-import Navbar from "./components/Navbar";
-import Dashboard from "./components/Dashboard";
-import QuestBoard from "./components/QuestBoard";
-import BossRaid from "./components/BossRaid";
-import Leaderboard from "./components/Leaderboard";
-import WalletAnalyzer from "./components/WalletAnalyzer";
+import { getLevelInfo, shortAddr } from "../utils/contracts";
 
-const TABS = [
-  { id: "dashboard", label: "Dashboard", icon: "/dashboard.svg" },
-  { id: "quests", label: "Quests", icon: "/quests.svg" },
-  { id: "bossraid", label: "Boss", icon: "/boss.svg" },
-  { id: "analyzer", label: "Wallet", icon: "/wallet.svg" }
-];
+export default function Dashboard({ quests, wallet, setActiveTab }) {
+  const { address, isConnected } = wallet;
+  const { userProfile, dailyTasks, completedCount, totalDaily, loading } = quests;
 
-const ICON_BLUE = "#0082FF";
+  const levelInfo = userProfile ? getLevelInfo(userProfile.totalXP) : null;
 
-export default function App() {
+  if (!isConnected) return (
+    <div style={{ padding: "60px 20px", textAlign: "center" }}>
+      <div style={{ fontSize: "80px", marginBottom: "20px" }}>🟦</div>
+      <h1 style={{ color: "white", fontSize: "28px", fontWeight: "900", margin: "0 0 12px" }}>
+        Skill issue if you're not on-chain yet.
+      </h1>
+      <p style={{ color: "#8892a4", fontSize: "16px", maxWidth: "400px", margin: "0 auto 8px" }}>
+        Stack XP. Build legacy. Eat the airdrop.
+      </p>
+      <p style={{ color: "#0052ff", fontSize: "15px", fontWeight: "700", maxWidth: "400px", margin: "0 auto 32px" }}>
+        Based chads only. No paper hands allowed.
+      </p>
+    </div>
+  );
 
-  const [page, setPage] = useState("dashboard");
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [highlightPosition, setHighlightPosition] = useState(0);
-
-  const wallet = useWallet();
-  const quests = useQuests(wallet);
-
-  const walletWithProfile = { ...wallet, userProfile: quests.userProfile };
-
-  const pageIndex = {
-    dashboard: 0,
-    quests: 1,
-    bossraid: 2,
-    analyzer: 3
-  };
-
-  const isLeaderboard = page === "leaderboard";
+  if (loading && !userProfile) return (
+    <div style={{ padding: "60px 20px", textAlign: "center" }}>
+      <div style={{ fontSize: "40px", marginBottom: "16px" }}>⏳</div>
+      <div style={{ color: "#8892a4" }}>Loading your profile...</div>
+    </div>
+  );
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#0a0b0f",
-        color: "white",
-        fontFamily: "'Inter', sans-serif",
-        overflowX: "hidden"
-      }}
-    >
-
-      <Navbar wallet={walletWithProfile} />
-
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
-          padding: "0 16px 100px",
-          overflow: "hidden",
-          position: "relative"
-        }}
-      >
-
-        <div
-          style={{
-            display: "flex",
-            width: "400%",
-            transform: isLeaderboard
-              ? "translateX(100%)"
-              : `translateX(-${pageIndex[page] * 25}%)`,
-            transition: "transform 0.35s ease"
-          }}
-        >
-
-          <div style={{ width: "25%" }}>
-            <Dashboard quests={quests} wallet={wallet} setPage={setPage} />
-          </div>
-
-          <div style={{ width: "25%" }}>
-            <QuestBoard quests={quests} wallet={wallet} />
-          </div>
-
-          <div style={{ width: "25%" }}>
-            <BossRaid wallet={wallet} />
-          </div>
-
-          <div style={{ width: "25%" }}>
-            <WalletAnalyzer wallet={wallet} />
-          </div>
-
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: isLeaderboard ? "0%" : "-100%",
-            width: "100%",
-            transition: "left 0.35s ease"
-          }}
-        >
-          <Leaderboard wallet={wallet} />
-        </div>
-
+    <div style={{ padding: "24px 0", width: "100%" }}>
+      {/* Welcome */}
+      <div style={{ marginBottom: "24px" }}>
+        <h2 style={{ color: "white", fontSize: "22px", fontWeight: "800", margin: "0 0 4px" }}>
+          👋 Welcome back, {userProfile?.usernameSet ? userProfile.username : shortAddr(address)}
+        </h2>
+        <p style={{ color: "#8892a4", fontSize: "14px", margin: 0 }}>
+          Here's your BaseQuest overview.
+        </p>
       </div>
 
-      <div
-        className="mobile-nav"
-        style={{
-          position: "fixed",
-          bottom: "16px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "90%",
-          maxWidth: "480px",
-          display: "flex",
-          justifyContent: "space-between",
-          background: "rgba(10,11,15,0.45)",
-          borderRadius: "9999px",
-          padding: "2px 0",
-          backdropFilter: "blur(18px)",
-          zIndex: 100
-        }}
-      >
-
-        <div
-          style={{
-            position: "absolute",
-            top: "2%",
-            left: `${highlightPosition}%`,
-            width: `${100 / TABS.length}%`,
-            height: "96%",
-            borderRadius: "9999px",
-            background: "rgba(0,82,255,0.25)",
-            transition: "left 0.3s",
-            zIndex: -1
-          }}
-        />
-
-        {TABS.map((tab, index) => (
-
-          <div
-            key={tab.id}
-            onClick={() => {
-              setActiveTab(tab.id);
-              setPage(tab.id);
-              setHighlightPosition(index * (100 / TABS.length));
-            }}
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer"
-            }}
-          >
-
-            <img
-              src={tab.icon}
-              alt={tab.label}
-              style={{
-                width: "22px",
-                height: "22px",
-                filter:
-                  activeTab === tab.id
-                    ? "invert(37%) sepia(98%) saturate(4869%) hue-rotate(199deg) brightness(101%) contrast(101%)"
-                    : "invert(100%)"
-              }}
-            />
-
-            <span
-              style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: activeTab === tab.id ? ICON_BLUE : "white"
-              }}
-            >
-              {tab.label}
-            </span>
-
+      {/* XP + Level card */}
+      {levelInfo && (
+        <div style={{
+          background: "linear-gradient(135deg, rgba(0,82,255,0.15), rgba(0,82,255,0.05))",
+          border: "1px solid rgba(0,82,255,0.3)",
+          borderRadius: "20px",
+          padding: "24px",
+          marginBottom: "16px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+            <div>
+              <div style={{ color: "#8892a4", fontSize: "12px", fontWeight: "700", letterSpacing: "1px", marginBottom: "4px" }}>
+                CURRENT LEVEL
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <span style={{ fontSize: "36px" }}>{levelInfo.current.emoji}</span>
+                <div>
+                  <div style={{ color: levelInfo.current.color, fontWeight: "900", fontSize: "22px" }}>
+                    Level {levelInfo.current.level} — {levelInfo.current.name}
+                  </div>
+                  {levelInfo.next && (
+                    <div style={{ color: "#8892a4", fontSize: "13px" }}>
+                      Next: {levelInfo.next.name} at {levelInfo.next.minXP.toLocaleString()} XP
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ color: "#f0b429", fontWeight: "900", fontSize: "32px" }}>
+                {levelInfo.xp.toLocaleString()}
+              </div>
+              <div style={{ color: "#8892a4", fontSize: "13px" }}>Total XP</div>
+            </div>
           </div>
 
+          {/* XP progress bar */}
+          {levelInfo.next ? (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                <span style={{ color: "#8892a4", fontSize: "12px" }}>{levelInfo.xp.toLocaleString()} XP</span>
+                <span style={{ color: "#8892a4", fontSize: "12px" }}>{levelInfo.next.minXP.toLocaleString()} XP</span>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px", height: "10px", overflow: "hidden" }}>
+                <div style={{
+                  height: "100%",
+                  width: `${levelInfo.progress}%`,
+                  background: `linear-gradient(90deg, ${levelInfo.current.color}, ${levelInfo.current.color}99)`,
+                  borderRadius: "8px",
+                  boxShadow: `0 0 10px ${levelInfo.current.color}66`,
+                  transition: "width 0.5s ease",
+                }}/>
+              </div>
+              <div style={{ color: "#8892a4", fontSize: "12px", marginTop: "6px", textAlign: "center" }}>
+                {levelInfo.progress.toFixed(1)}% to {levelInfo.next.name}
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: "center", color: "#f0b429", fontWeight: "700", fontSize: "14px", marginTop: "8px" }}>
+              🏆 Max Level Reached!
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Stats grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px,1fr))", gap: "12px", marginBottom: "16px" }}>
+        {[
+          { label: "Tasks Completed", value: userProfile?.tasksCompleted?.toLocaleString() || "0", icon: "✅", color: "#00c853" },
+          { label: "Day Streak", value: userProfile?.streakCount || "0", icon: "🔥", color: "#f0b429" },
+          { label: "Daily Progress", value: `${completedCount}/${totalDaily}`, icon: "🗺️", color: "#0052ff" },
+          { label: "Member Since", value: userProfile?.joinedAt
+              ? new Date(userProfile.joinedAt * 1000).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+              : "—", icon: "📅", color: "#a855f7" },
+        ].map(stat => (
+          <div key={stat.label} style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: "16px",
+            padding: "16px",
+            textAlign: "center",
+          }}>
+            <div style={{ fontSize: "24px", marginBottom: "8px" }}>{stat.icon}</div>
+            <div style={{ color: stat.color, fontWeight: "800", fontSize: "20px" }}>{stat.value}</div>
+            <div style={{ color: "#8892a4", fontSize: "11px", marginTop: "4px" }}>{stat.label}</div>
+          </div>
         ))}
-
       </div>
 
+      {/* Leaderboard button only */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "12px" }}>
+        <button
+          onClick={() => setActiveTab("leaderboard")}
+          style={{
+            background: "rgba(240,180,41,0.1)",
+            border: "1px solid rgba(240,180,41,0.3)",
+            borderRadius: "14px",
+            padding: "16px",
+            color: "#f0b429",
+            fontWeight: "800",
+            fontSize: "14px",
+            cursor: "pointer",
+          }}
+        >
+          🏆 Leaderboard
+        </button>
+      </div>
     </div>
   );
 }
