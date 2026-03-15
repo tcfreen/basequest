@@ -17,12 +17,11 @@ const gBlue = { background: "linear-gradient(135deg,rgba(0,82,255,0.18),rgba(0,1
 const gGold = { background: "linear-gradient(135deg,rgba(240,180,41,0.16),rgba(255,140,0,0.08))", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(240,180,41,0.30)", borderRadius: "20px" };
 
 const ICON_FILTERS = {
-  check:    "brightness(0) saturate(100%) invert(72%) sepia(60%) saturate(500%) hue-rotate(100deg) brightness(1.1)",   // #00e676
-  fire:     "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)",  // #f0b429
-  quests:   "brightness(0) saturate(100%) invert(60%) sepia(70%) saturate(500%) hue-rotate(190deg) brightness(1.1)",   // #4da6ff
-  calendar: "brightness(0) saturate(100%) invert(65%) sepia(50%) saturate(600%) hue-rotate(240deg) brightness(1.05)", // #c084fc
-  trophy:   "brightness(0) saturate(100%) invert(78%) sepia(80%) saturate(600%) hue-rotate(5deg)   brightness(1.05)", // #f0b429
-  wave:     "brightness(0) saturate(100%) invert(60%) sepia(70%) saturate(500%) hue-rotate(190deg) brightness(1.1)",  // #4da6ff
+  check:    "brightness(0) saturate(100%) invert(72%) sepia(80%) saturate(600%) hue-rotate(103deg) brightness(1.1)",   // #03E778
+  fire:     "brightness(0) saturate(100%) invert(78%) sepia(90%) saturate(500%) hue-rotate(10deg)  brightness(1.05)", // #EDB32D
+  quests:   "brightness(0) saturate(100%) invert(58%) sepia(80%) saturate(500%) hue-rotate(192deg) brightness(1.1)",  // #4FA7FF
+  calendar: "brightness(0) saturate(100%) invert(62%) sepia(60%) saturate(700%) hue-rotate(242deg) brightness(1.05)", // #C186FC
+  trophy:   "brightness(0) saturate(100%) invert(76%) sepia(85%) saturate(500%) hue-rotate(10deg)  brightness(1.05)", // #F0B52D
 };
 
 export default function Dashboard({ quests, wallet, setPage }) {
@@ -65,12 +64,12 @@ export default function Dashboard({ quests, wallet, setPage }) {
   );
 
   const stats = [
-    { src: "/check.svg",    value: userProfile?.tasksCompleted?.toLocaleString() ?? "0", color: "#00e676", label: "TASKS DONE",    filterKey: "check"    },
-    { src: "/fire.svg",     value: userProfile?.streakCount ?? "0",                       color: "#f0b429", label: "DAY STREAK",   filterKey: "fire"     },
-    { src: "/quests.svg",   value: `${completedCount}/${totalDaily}`,                     color: "#4da6ff", label: "DAILY QUESTS", filterKey: "quests"   },
+    { src: "/check.svg",    value: userProfile?.tasksCompleted?.toLocaleString() ?? "0", color: "#03E778", label: "TASKS DONE",    filterKey: "check"    },
+    { src: "/fire.svg",     value: userProfile?.streakCount ?? "0",                       color: "#EDB32D", label: "DAY STREAK",   filterKey: "fire"     },
+    { src: "/quests.svg",   value: `${completedCount}/${totalDaily}`,                     color: "#4FA7FF", label: "DAILY QUESTS", filterKey: "quests"   },
     { src: "/calendar.svg", value: userProfile?.joinedAt
         ? new Date(userProfile.joinedAt * 1000).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-        : "—",                                                                             color: "#c084fc", label: "MEMBER SINCE", filterKey: "calendar" },
+        : "—",                                                                             color: "#C186FC", label: "MEMBER SINCE", filterKey: "calendar" },
   ];
 
   return (
@@ -78,7 +77,6 @@ export default function Dashboard({ quests, wallet, setPage }) {
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
-        <Icon src="/wave.svg" size={m ? 24 : 28} style={{ filter: ICON_FILTERS.wave }} />
         <div>
           <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px", letterSpacing: "-0.3px" }}>
             Welcome back, <span style={{ color: "#4da6ff" }}>{userProfile?.usernameSet ? userProfile.username : shortAddr(address)}</span>
@@ -150,7 +148,7 @@ export default function Dashboard({ quests, wallet, setPage }) {
       <button
         className="db"
         onClick={() => setPage("leaderboard")}
-        style={{ width: "100%", ...gGold, padding: m ? "13px 14px" : "15px 20px", color: "#f0b429", fontWeight: 800, fontSize: m ? "13px" : "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 9, transition: "transform 0.15s, box-shadow 0.15s", boxShadow: "0 4px 20px rgba(240,180,41,0.10)", WebkitTapHighlightColor: "transparent", userSelect: "none" }}
+        style={{ width: "100%", ...gGold, padding: m ? "13px 14px" : "15px 20px", color: "#F0B52D", fontWeight: 800, fontSize: m ? "13px" : "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 9, transition: "transform 0.15s, box-shadow 0.15s", boxShadow: "0 4px 20px rgba(240,180,41,0.10)", WebkitTapHighlightColor: "transparent", userSelect: "none" }}
         onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(240,180,41,0.22)"; }}
         onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)";    e.currentTarget.style.boxShadow = "0 4px 20px rgba(240,180,41,0.10)"; }}
         onTouchStart={e => e.currentTarget.style.transform = "scale(0.98)"}
@@ -167,4 +165,4 @@ export default function Dashboard({ quests, wallet, setPage }) {
 
     </div>
   );
-          }
+                            }
