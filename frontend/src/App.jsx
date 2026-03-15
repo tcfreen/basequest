@@ -12,7 +12,7 @@ const TABS = [
   { id: "dashboard", label: "Dashboard", icon: "/dashboard.svg" },
   { id: "quests", label: "Quests", icon: "/quests.svg" },
   { id: "bossraid", label: "Boss", icon: "/boss.svg" },
-  { id: "analyzer", label: "Wallet", icon: "/wallet.svg" },
+  { id: "analyzer", label: "Wallet", icon: "/wallet.svg" }
 ];
 
 const ICON_BLUE = "#0082FF";
@@ -32,14 +32,19 @@ export default function App() {
     switch (page) {
       case "dashboard":
         return <Dashboard quests={quests} wallet={wallet} setPage={setPage} />;
+
       case "quests":
         return <QuestBoard quests={quests} wallet={wallet} />;
+
       case "bossraid":
         return <BossRaid wallet={wallet} />;
+
       case "leaderboard":
         return <Leaderboard wallet={wallet} />;
+
       case "analyzer":
         return <WalletAnalyzer wallet={wallet} />;
+
       default:
         return <Dashboard quests={quests} wallet={wallet} setPage={setPage} />;
     }
@@ -62,45 +67,6 @@ export default function App() {
       }}>
         {renderPage()}
       </div>
-
-      <div style={{
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        padding: "24px 16px 100px",
-        textAlign: "center",
-        marginTop: "40px"
-      }}>
-
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "24px",
-          marginBottom: "12px"
-        }}>
-          <a
-            href="https://twitter.com/Jee_phoenix"
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              color: "#8892a4",
-              fontSize: "13px",
-              fontWeight: "600",
-              textDecoration: "none"
-            }}
-          >
-            𝕏 Contact Us
-          </a>
-        </div>
-
-        <div style={{ color: "#4a5568", fontSize: "12px", marginBottom: "4px" }}>
-          © 2026 BaseQuest
-        </div>
-
-        <div style={{ color: "#4a5568", fontSize: "11px" }}>
-          Built with 💙 on Base
-        </div>
-
-      </div>
-
 
       <div style={{
         position: "fixed",
@@ -126,7 +92,6 @@ export default function App() {
           height: "96%",
           borderRadius: "9999px",
           background: "rgba(0,82,255,0.25)",
-          backdropFilter: "blur(12px)",
           transition: "left 0.3s",
           zIndex: -1
         }}/>
@@ -146,8 +111,7 @@ export default function App() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              cursor: "pointer",
-              padding: "2px 0"
+              cursor: "pointer"
             }}
           >
 
@@ -157,7 +121,6 @@ export default function App() {
               style={{
                 width: "22px",
                 height: "22px",
-                marginBottom: "1px",
                 filter: activeTab === tab.id
                   ? "invert(37%) sepia(98%) saturate(4869%) hue-rotate(199deg) brightness(101%) contrast(101%)"
                   : "invert(100%)"
@@ -177,35 +140,6 @@ export default function App() {
         ))}
 
       </div>
-
-      <style>{`
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body { background: #0a0b0f; }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-
-        ::-webkit-scrollbar-thumb {
-          background: rgba(0,82,255,0.3);
-          border-radius: 3px;
-        }
-
-        input::placeholder { color: #4a5568; }
-
-        a { color: inherit; }
-
-        @media (min-width: 768px) {
-          .mobile-nav { display: none !important; }
-        }
-
-        @media (max-width: 767px) {
-          .mobile-nav { display: flex !important; }
-        }
-
-      `}</style>
 
     </div>
   );
