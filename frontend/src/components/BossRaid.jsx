@@ -32,6 +32,27 @@ const gBlue = { background: "rgba(0,82,255,0.06)",    backdropFilter: "blur(20px
 const hpColor  = p => p > 60 ? "#00c853" : p > 30 ? "#f0b429" : "#ff3b3b";
 const bossIcon = p => p > 66 ? "/boss-full.svg" : p > 33 ? "/boss-mid.svg" : "/boss-dead.svg";
 
+// Reusable filter helpers
+const WHITE  = "brightness(0) invert(1)";
+const maskStyle = (src, color, size) => ({
+  display: "block",
+  width: size, height: size, flexShrink: 0,
+  backgroundColor: color,
+  WebkitMaskImage: `url(${src})`,
+  WebkitMaskSize: "contain",
+  WebkitMaskRepeat: "no-repeat",
+  WebkitMaskPosition: "center",
+  maskImage: `url(${src})`,
+  maskSize: "contain",
+  maskRepeat: "no-repeat",
+  maskPosition: "center",
+});
+
+// Colored icon via CSS mask for exact hex color
+const ColorIcon = ({ src, size = 22, color, style = {} }) => (
+  <div style={{ ...maskStyle(src, color, size), ...style }} />
+);
+
 export default function BossRaid({ wallet }) {
   const { address, signer, isConnected } = wallet;
 
@@ -93,10 +114,10 @@ export default function BossRaid({ wallet }) {
       if (address) {
         const stats = await contract.getPlayerStats(address);
         setPlayerStats({
-          damageThisRaid:     Number(stats.damageThisRaid),
-          totalDamage:        Number(stats.totalDamage),
-          raidsJoined:        Number(stats.raidsJoined),
-          raidsWon:           Number(stats.raidsWon),
+          damageThisRaid:      Number(stats.damageThisRaid),
+          totalDamage:         Number(stats.totalDamage),
+          raidsJoined:         Number(stats.raidsJoined),
+          raidsWon:            Number(stats.raidsWon),
           hasAttackedThisRaid: stats.hasAttackedThisRaid,
         });
       }
@@ -143,7 +164,7 @@ export default function BossRaid({ wallet }) {
 
   if (!isConnected) return (
     <div className="db" style={{ padding: m ? "48px 0" : "72px 0", textAlign: "center" }}>
-      <Icon src="/boss.svg" size={m ? 80 : 110} style={{ margin: "0 auto 20px", filter: "brightness(0) invert(1)" }} />
+      <Icon src="/boss.svg" size={m ? 80 : 110} style={{ margin: "0 auto 20px", filter: WHITE }} />
       <div className="dh" style={{ color: "white", fontSize: m ? "18px" : "22px", fontWeight: 800, marginBottom: 8 }}>Boss Raid</div>
       <div className="db" style={{ color: "#8892a4", fontSize: m ? "13px" : "14px" }}>Connect your wallet to join the raid!</div>
     </div>
@@ -151,7 +172,7 @@ export default function BossRaid({ wallet }) {
 
   if (loading) return (
     <div className="db" style={{ padding: m ? "48px 0" : "72px 0", textAlign: "center" }}>
-      <Icon src="/sword.svg" size={m ? 36 : 48} style={{ margin: "0 auto 16px", opacity: 0.6 }} />
+      <Icon src="/sword.svg" size={m ? 36 : 48} style={{ margin: "0 auto 16px", filter: WHITE, opacity: 0.6 }} />
       <div style={{ color: "#8892a4", fontSize: m ? "13px" : "15px" }}>Loading raid...</div>
     </div>
   );
@@ -161,7 +182,7 @@ export default function BossRaid({ wallet }) {
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
-        <Icon src="/boss.svg" size={m ? 40 : 46} style={{ filter: "brightness(0) invert(1)", opacity: 0.85 }} />
+        <Icon src="/boss.svg" size={m ? 40 : 46} style={{ filter: WHITE }} />
         <div>
           <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>Boss Raid</h2>
           <p style={{ color: "#5a6478", fontSize: m ? "10px" : "11px", margin: 0, fontWeight: 600, letterSpacing: "0.07em" }}>
@@ -189,7 +210,7 @@ export default function BossRaid({ wallet }) {
         {/* Damage popup */}
         {lastDamage && (
           <div style={{ position: "absolute", top: 20, right: 20, background: lastDamage.killingBlow ? "rgba(240,180,41,0.2)" : "rgba(255,59,59,0.2)", border: `1px solid ${lastDamage.killingBlow ? "rgba(240,180,41,0.5)" : "rgba(255,59,59,0.4)"}`, borderRadius: 12, padding: "8px 14px", display: "flex", alignItems: "center", gap: 6, animation: "floatDmg 1.5s ease forwards" }}>
-            <Icon src={lastDamage.killingBlow ? "/trophy.svg" : "/sword.svg"} size={16} style={{ opacity: 0.9 }} />
+            <ColorIcon src={lastDamage.killingBlow ? "/trophy.svg" : "/sword.svg"} size={16} color={lastDamage.killingBlow ? "#f0b429" : "#ff6b6b"} />
             <span style={{ color: lastDamage.killingBlow ? "#f0b429" : "#ff6b6b", fontWeight: 800, fontSize: m ? "14px" : "16px" }}>
               {lastDamage.killingBlow ? "KILLING BLOW!" : `-${lastDamage.damage} HP`}
             </span>
@@ -206,7 +227,7 @@ export default function BossRaid({ wallet }) {
           <div style={{ height: "100%", width: `${boss?.hpPercent || 0}%`, background: `linear-gradient(90deg,${hpColor(boss?.hpPercent)},${hpColor(boss?.hpPercent)}aa)`, borderRadius: 12, transition: "width 0.5s ease", boxShadow: `0 0 12px ${hpColor(boss?.hpPercent)}88` }} />
         </div>
 
-        {/* Stats row */}
+        {/* Stats row — colored icons matching their value color */}
         <div style={{ display: "flex", justifyContent: "center", gap: m ? 16 : 32, marginBottom: m ? 18 : 24, flexWrap: "wrap" }}>
           {[
             { icon: "/trophy.svg",   value: `${parseFloat(ethers.formatEther(boss?.prizePool || 0)).toFixed(5)} ETH`, sub: `Prize (~$${prizeUsd})`, color: "#f0b429" },
@@ -216,7 +237,7 @@ export default function BossRaid({ wallet }) {
           ].map(({ icon, value, sub, color }) => (
             <div key={sub} style={{ textAlign: "center" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, marginBottom: 2 }}>
-                <Icon src={icon} size={m ? 13 : 15} style={{ opacity: 0.7 }} />
+                <ColorIcon src={icon} size={m ? 15 : 17} color={color} />
                 <span className="dh" style={{ color, fontWeight: 800, fontSize: m ? "16px" : "20px" }}>{value}</span>
               </div>
               <div style={{ color: "#5a6478", fontSize: m ? "10px" : "11px", fontWeight: 600 }}>{sub}</div>
@@ -230,7 +251,7 @@ export default function BossRaid({ wallet }) {
           disabled={attacking || !isConnected || boss?.defeated}
           style={{ background: attacking ? "rgba(255,59,59,0.3)" : boss?.defeated ? "rgba(100,100,100,0.2)" : "linear-gradient(135deg,#ff3b3b,#cc0000)", border: "none", borderRadius: 16, padding: m ? "13px 32px" : "16px 48px", color: "white", fontWeight: 900, fontSize: m ? "15px" : "18px", cursor: attacking || boss?.defeated ? "not-allowed" : "pointer", opacity: boss?.defeated ? 0.5 : 1, boxShadow: attacking || boss?.defeated ? "none" : "0 0 24px rgba(255,59,59,0.4)", transition: "all 0.2s", letterSpacing: 1, display: "inline-flex", alignItems: "center", gap: 10, fontFamily: "Syne, sans-serif" }}
         >
-          <Icon src={attacking ? "/hourglass.svg" : boss?.defeated ? "/skull.svg" : "/sword.svg"} size={m ? 18 : 22} style={{ opacity: 0.9 }} />
+          <Icon src={attacking ? "/hourglass.svg" : boss?.defeated ? "/skull.svg" : "/sword.svg"} size={m ? 18 : 22} style={{ filter: WHITE, opacity: 0.9 }} />
           {attacking ? "Attacking..." : boss?.defeated ? "Boss Defeated" : "ATTACK! (0.00005 ETH)"}
         </button>
 
@@ -244,7 +265,7 @@ export default function BossRaid({ wallet }) {
         {/* Defeated message */}
         {boss?.defeated && boss?.winner && (
           <div style={{ marginTop: 14, background: "rgba(240,180,41,0.1)", border: "1px solid rgba(240,180,41,0.3)", borderRadius: 12, padding: "11px 16px", display: "flex", alignItems: "center", gap: 8 }}>
-            <Icon src="/trophy.svg" size={16} style={{ opacity: 0.9 }} />
+            <ColorIcon src="/trophy.svg" size={16} color="#f0b429" />
             <span style={{ color: "#f0b429", fontWeight: 700, fontSize: m ? "12px" : "13px" }}>
               {shortAddr(boss.winner)} landed the killing blow! Next boss is spawning...
             </span>
@@ -256,7 +277,8 @@ export default function BossRaid({ wallet }) {
       {playerStats && (
         <div style={{ ...gBlue, padding: m ? "14px" : "20px", marginBottom: m ? 10 : 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: m ? 12 : 16 }}>
-            <Icon src="/sword.svg" size={m ? 16 : 18} style={{ opacity: 0.85 }} />
+            {/* UI icon — white */}
+            <Icon src="/sword.svg" size={m ? 18 : 20} style={{ filter: WHITE }} />
             <div className="dh" style={{ color: "white", fontSize: m ? "13px" : "15px", fontWeight: 800 }}>Your Raid Stats</div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: m ? "1fr 1fr" : "repeat(4,1fr)", gap: m ? 7 : 10 }}>
@@ -274,7 +296,8 @@ export default function BossRaid({ wallet }) {
           </div>
           {playerStats.hasAttackedThisRaid && (
             <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 7, justifyContent: "center" }}>
-              <Icon src="/check.svg" size={14} style={{ opacity: 0.85 }} />
+              {/* Colored check to match #00c853 */}
+              <ColorIcon src="/check.svg" size={16} color="#00c853" />
               <span style={{ color: "#00c853", fontSize: m ? "12px" : "13px", fontWeight: 600 }}>You have attacked this raid — keep attacking for more chances!</span>
             </div>
           )}
@@ -284,12 +307,13 @@ export default function BossRaid({ wallet }) {
       {/* Live attack feed */}
       <div style={{ ...gBase, padding: m ? "14px" : "20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: m ? 12 : 16 }}>
-          <Icon src="/fire.svg" size={m ? 16 : 18} style={{ opacity: 0.85 }} />
+          {/* UI icon — white */}
+          <Icon src="/fire.svg" size={m ? 18 : 20} style={{ filter: WHITE }} />
           <div className="dh" style={{ color: "white", fontSize: m ? "13px" : "15px", fontWeight: 800 }}>Live Attack Feed</div>
         </div>
         {recentAttacks.length === 0 ? (
           <div style={{ color: "#8892a4", fontSize: m ? "12px" : "14px", textAlign: "center", padding: m ? "16px 0" : "20px 0", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            <Icon src="/sword.svg" size={16} style={{ opacity: 0.4 }} />
+            <Icon src="/sword.svg" size={18} style={{ filter: WHITE, opacity: 0.4 }} />
             No attacks yet. Be the first to strike!
           </div>
         ) : (
@@ -297,7 +321,12 @@ export default function BossRaid({ wallet }) {
             {recentAttacks.map((atk, i) => (
               <div key={i} style={{ background: atk.killingBlow ? "rgba(240,180,41,0.08)" : "rgba(255,255,255,0.02)", border: `1px solid ${atk.killingBlow ? "rgba(240,180,41,0.3)" : "rgba(255,255,255,0.05)"}`, borderRadius: 10, padding: m ? "9px 11px" : "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-                  <Icon src={atk.killingBlow ? "/trophy.svg" : "/sword.svg"} size={m ? 15 : 17} style={{ flexShrink: 0, opacity: 0.85 }} />
+                  {/* Feed icons colored to match their context */}
+                  <ColorIcon
+                    src={atk.killingBlow ? "/trophy.svg" : "/sword.svg"}
+                    size={m ? 17 : 19}
+                    color={atk.killingBlow ? "#f0b429" : "#00d4ff"}
+                  />
                   <div style={{ minWidth: 0 }}>
                     <span className="dh" style={{ color: atk.killingBlow ? "#f0b429" : "white", fontWeight: 700, fontSize: m ? "12px" : "13px" }}>
                       {shortAddr(atk.attacker)}
@@ -321,4 +350,4 @@ export default function BossRaid({ wallet }) {
 
     </div>
   );
-            }
+          }
