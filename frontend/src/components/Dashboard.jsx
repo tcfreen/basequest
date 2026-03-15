@@ -58,7 +58,7 @@ export default function Dashboard({ quests, wallet, setPage }) {
   const stats = [
     { src: "/check.svg",    value: userProfile?.tasksCompleted?.toLocaleString() ?? "0", color: "#00e676", label: "TASKS DONE"    },
     { src: "/fire.svg",     value: userProfile?.streakCount ?? "0",                       color: "#f0b429", label: "DAY STREAK"   },
-    { src: "/map.svg",      value: `${completedCount}/${totalDaily}`,                     color: "#4da6ff", label: "DAILY QUESTS" },
+    { src: "/quests.svg",      value: `${completedCount}/${totalDaily}`,                     color: "#4da6ff", label: "DAILY QUESTS" },
     { src: "/calendar.svg", value: userProfile?.joinedAt
         ? new Date(userProfile.joinedAt * 1000).toLocaleDateString("en-US", { month: "short", year: "numeric" })
         : "—",                                                                             color: "#c084fc", label: "MEMBER SINCE" },
