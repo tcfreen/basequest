@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { shortAddr, getLevelInfo } from "../utils/contracts";
+import { shortAddr } from "../utils/contracts";
 
 const Icon = ({ src, size = 18, style = {} }) => (
   <img src={src} alt="" width={size} height={size} style={{ display: "block", ...style }} />
@@ -16,8 +16,6 @@ const WALLETS = [
   { id: "coinbase", label: "Coinbase Wallet", icon: "/coinbase.svg"  },
   { id: "injected", label: "Rabby / Other",   icon: "/rabby.svg"     },
 ];
-
-const WHITE = "brightness(0) invert(1)";
 
 export default function Navbar({ wallet }) {
   const { address, isConnected, isConnecting, isCorrectNetwork,
@@ -39,7 +37,6 @@ export default function Navbar({ wallet }) {
   }, []);
 
   const m = isMobile;
-  const levelInfo = userProfile ? getLevelInfo(userProfile.totalXP) : null;
 
   const menuStyle = {
     position: "absolute", right: 0, top: "calc(100% + 8px)",
@@ -83,21 +80,6 @@ export default function Navbar({ wallet }) {
         {/* Right side */}
         <div style={{ display: "flex", alignItems: "center", gap: m ? 7 : 10 }}>
 
-          {/* XP badge */}
-          {isConnected && levelInfo && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: m ? "5px 9px" : "6px 12px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10 }}>
-              <Icon src={levelInfo.current.icon} size={m ? 16 : 20} style={{ filter: `drop-shadow(0 0 4px ${levelInfo.current.color})` }} />
-              <div style={{ lineHeight: 1.2 }}>
-                <div className="dh" style={{ color: "#00d4ff", fontWeight: 800, fontSize: m ? "11px" : "12px" }}>
-                  {userProfile.totalXP.toLocaleString()} XP
-                </div>
-                <div className="db" style={{ color: "#8892a4", fontSize: "10px" }}>
-                  Lvl {levelInfo.current.level} · {levelInfo.current.name}
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Wrong network */}
           {isConnected && !isCorrectNetwork && (
             <button onClick={switchNetwork} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(255,59,59,0.12)", border: "1px solid rgba(255,59,59,0.35)", borderRadius: 8, padding: m ? "5px 9px" : "6px 12px", color: "#ff6b6b", fontWeight: 700, fontSize: m ? "11px" : "12px", cursor: "pointer", fontFamily: "DM Sans, sans-serif" }}>
@@ -116,7 +98,7 @@ export default function Navbar({ wallet }) {
               >
                 {isConnecting
                   ? <><Icon src="/hourglass.svg" size={14} style={{ opacity: 0.8 }} /> Connecting...</>
-                  : <><Icon src="/wallet.svg"    size={14} style={{ filter: WHITE, opacity: 0.9 }} /> {m ? "Connect" : "Connect Wallet"}</>
+                  : <><Icon src="/wallet.svg"    size={14} style={{ opacity: 0.9 }} /> {m ? "Connect" : "Connect Wallet"}</>
                 }
               </button>
 
@@ -163,7 +145,7 @@ export default function Navbar({ wallet }) {
                     onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
                     onMouseLeave={e => e.currentTarget.style.background = "none"}
                   >
-                    <Icon src="/basescan.svg" size={16} style={{ filter: WHITE }} />
+                    <Icon src="/basescan.svg" size={16} style={{ opacity: 0.75 }} />
                     View on Basescan
                   </a>
                   <button
