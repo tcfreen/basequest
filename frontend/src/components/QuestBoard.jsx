@@ -15,21 +15,28 @@ const gBase  = { background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20p
 const gGreen = { background: "rgba(0,200,83,0.06)",    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(0,200,83,0.18)",    borderRadius: "16px" };
 
 const REMIX_GUIDE = [
-  { step: "1",  title: "Open Remix IDE",           desc: "Go to remix.ethereum.org in your browser." },
-  { step: "2",  title: "Create a new file",         desc: 'Click the file icon in the File Explorer. Name it e.g. "MyContract.sol".' },
-  { step: "3",  title: "Paste a simple contract",   desc: '// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\ncontract MyContract {\n    string public message = "GM Base!";\n}' },
-  { step: "4",  title: "Compile",                   desc: 'Click the Solidity Compiler tab, then "Compile MyContract.sol". Look for the green checkmark.' },
-  { step: "5",  title: "Open Deploy tab",           desc: 'Click the "Deploy & Run Transactions" tab.' },
-  { step: "6",  title: "Select Injected Provider",  desc: 'Set ENVIRONMENT to "Injected Provider - MetaMask" and approve the connection.' },
-  { step: "7",  title: "Switch to Base Mainnet",    desc: "Ensure your wallet is on Base Mainnet (Chain ID: 8453)." },
-  { step: "8",  title: "Deploy",                    desc: 'Click the orange "Deploy" button and confirm in your wallet.' },
-  { step: "9",  title: "Copy contract address",     desc: 'Under "Deployed Contracts", copy the address using the copy icon.' },
-  { step: "10", title: "Paste into BaseQuest",      desc: 'Paste the address in the field above and click Complete!' },
+  { step: "1",  title: "Open Remix IDE",          desc: "Go to remix.ethereum.org in your browser." },
+  { step: "2",  title: "Create a new file",        desc: 'Click the file icon in the File Explorer. Name it e.g. "MyContract.sol".' },
+  { step: "3",  title: "Paste a simple contract",  desc: '// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\ncontract MyContract {\n    string public message = "GM Base!";\n}' },
+  { step: "4",  title: "Compile",                  desc: 'Click the Solidity Compiler tab, then "Compile MyContract.sol". Look for the green checkmark.' },
+  { step: "5",  title: "Open Deploy tab",          desc: 'Click the "Deploy & Run Transactions" tab.' },
+  { step: "6",  title: "Select Injected Provider", desc: 'Set ENVIRONMENT to "Injected Provider - MetaMask" and approve the connection.' },
+  { step: "7",  title: "Switch to Base Mainnet",   desc: "Ensure your wallet is on Base Mainnet (Chain ID: 8453)." },
+  { step: "8",  title: "Deploy",                   desc: 'Click the orange "Deploy" button and confirm in your wallet.' },
+  { step: "9",  title: "Copy contract address",    desc: 'Under "Deployed Contracts", copy the address using the copy icon.' },
+  { step: "10", title: "Paste into BaseQuest",     desc: 'Paste the address in the field above and click Complete!' },
 ];
+
+const Badge = ({ label, color, bg }) => (
+  <span style={{ background: bg, color, fontSize: "10px", fontWeight: 700, padding: "2px 7px", borderRadius: 20 }}>{label}</span>
+);
 
 export default function QuestBoard({ quests, wallet }) {
   const { isConnected } = wallet;
-  const { completeTask, getTaskStatus, getSubTaskStatus, txPending, lastTx, error, completedCount, totalDaily } = quests;
+  const {
+    completeTask, getTaskStatus, getSubTaskStatus,
+    txPending, lastTx, error, completedCount, totalDaily,
+  } = quests;
 
   const [fieldValues,  setFieldValues]  = useState({});
   const [expandedTask, setExpandedTask] = useState(null);
@@ -50,18 +57,20 @@ export default function QuestBoard({ quests, wallet }) {
 
   const m = isMobile;
   const handleField    = (id, field, val) => setFieldValues(p => ({ ...p, [id]: { ...p[id], [field]: val } }));
-  const handleComplete = (id) => completeTask(id, fieldValues[id] || {});
-
-  const Badge = ({ label, color, bg }) => (
-    <span style={{ background: bg, color, fontSize: "10px", fontWeight: 700, padding: "2px 7px", borderRadius: 20 }}>{label}</span>
-  );
+  const handleComplete = async (e, taskId) => {
+    e.stopPropagation();
+    await completeTask(taskId, fieldValues[taskId] || {});
+  };
 
   const renderSubTasks = (platforms, groupId) => (
     <div style={{ marginTop: 12 }}>
-      <div onClick={() => setExpandedSubs(p => ({ ...p, [groupId]: !p[groupId] }))}
-        style={{ color: "#4da6ff", fontSize: "12px", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+      <div
+        onClick={e => { e.stopPropagation(); setExpandedSubs(p => ({ ...p, [groupId]: !p[groupId] })); }}
+        style={{ color: "#4da6ff", fontSize: "12px", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}
+      >
         {expandedSubs[groupId] ? "▲" : "▼"} Platform sub-tasks (+50 XP each)
       </div>
+
       {expandedSubs[groupId] && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
           {platforms.map(p => {
@@ -71,10 +80,18 @@ export default function QuestBoard({ quests, wallet }) {
                 <div style={{ display: "flex", alignItems: "center", gap: 10, ...(done ? gGreen : gBase), padding: "10px 12px" }}>
                   <Icon src={p.icon} size={20} />
                   <div style={{ flex: 1, color: "white", fontSize: "13px", fontWeight: 600 }}>{p.name}</div>
-                  <a href={p.url} target="_blank" rel="noreferrer"
-                    style={{ color: p.color, fontSize: "12px", fontWeight: 700, textDecoration: "none" }}>Go ↗</a>
-                  <button onClick={() => completeTask(p.id)} disabled={done || txPending}
-                    style={{ background: done ? "rgba(0,200,83,0.2)" : `${p.color}22`, border: `1px solid ${done ? "rgba(0,200,83,0.4)" : p.color + "44"}`, borderRadius: 8, padding: "4px 10px", color: done ? "#00c853" : p.color, fontSize: "11px", fontWeight: 700, cursor: done || txPending ? "not-allowed" : "pointer" }}>
+                  <a
+                    href={p.url} target="_blank" rel="noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    style={{ color: p.color, fontSize: "12px", fontWeight: 700, textDecoration: "none" }}
+                  >
+                    Go ↗
+                  </a>
+                  <button
+                    onClick={e => { e.stopPropagation(); completeTask(p.id); }}
+                    disabled={done || txPending}
+                    style={{ background: done ? "rgba(0,200,83,0.2)" : `${p.color}22`, border: `1px solid ${done ? "rgba(0,200,83,0.4)" : p.color + "44"}`, borderRadius: 8, padding: "4px 10px", color: done ? "#00c853" : p.color, fontSize: "11px", fontWeight: 700, cursor: done || txPending ? "not-allowed" : "pointer" }}
+                  >
                     {done ? "✓" : "+50 XP"}
                   </button>
                 </div>
@@ -82,8 +99,10 @@ export default function QuestBoard({ quests, wallet }) {
                 {/* Remix guide */}
                 {p.id === "deployRemix" && (
                   <div style={{ marginTop: 6 }}>
-                    <div onClick={() => setShowGuide(v => !v)}
-                      style={{ color: "#f0b429", fontSize: "12px", fontWeight: 700, cursor: "pointer", padding: "7px 12px", background: "rgba(240,180,41,0.06)", border: "1px solid rgba(240,180,41,0.15)", borderRadius: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                    <div
+                      onClick={e => { e.stopPropagation(); setShowGuide(v => !v); }}
+                      style={{ color: "#f0b429", fontSize: "12px", fontWeight: 700, cursor: "pointer", padding: "7px 12px", background: "rgba(240,180,41,0.06)", border: "1px solid rgba(240,180,41,0.15)", borderRadius: 8, display: "flex", alignItems: "center", gap: 6 }}
+                    >
                       <Icon src="/guide.svg" size={14} style={{ opacity: 0.8 }} />
                       {showGuide ? "▲ Hide" : "▼ Show"} step-by-step Remix guide
                     </div>
@@ -133,9 +152,7 @@ export default function QuestBoard({ quests, wallet }) {
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: m ? 14 : 20 }}>
         <Icon src="/map.svg" size={m ? 18 : 22} style={{ opacity: 0.85 }} />
         <div>
-          <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>
-            Quest Board
-          </h2>
+          <h2 className="dh" style={{ color: "white", fontSize: m ? "17px" : "22px", fontWeight: 900, margin: "0 0 2px" }}>Quest Board</h2>
           <p className="db" style={{ color: "#5a6478", fontSize: m ? "10px" : "11px", margin: 0, fontWeight: 600, letterSpacing: "0.07em" }}>
             {completedCount}/{totalDaily} DAILY QUESTS DONE
           </p>
@@ -166,28 +183,26 @@ export default function QuestBoard({ quests, wallet }) {
           return (
             <div key={task.id} style={{ ...(isDone ? gGreen : gBase), overflow: "hidden", transition: "all 0.2s" }}>
 
-              {/* Task row */}
-              <div onClick={() => !task.auto && !isDone && setExpandedTask(expanded ? null : task.id)}
-                style={{ padding: m ? "12px 14px" : "14px 18px", display: "flex", alignItems: "center", gap: m ? 10 : 14, cursor: task.auto || isDone ? "default" : "pointer" }}>
-
-                {/* Icon badge */}
+              {/* Task header row */}
+              <div
+                onClick={() => !task.auto && !isDone && setExpandedTask(expanded ? null : task.id)}
+                style={{ padding: m ? "12px 14px" : "14px 18px", display: "flex", alignItems: "center", gap: m ? 10 : 14, cursor: task.auto || isDone ? "default" : "pointer" }}
+              >
                 <div style={{ width: m ? 38 : 44, height: m ? 38 : 44, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: isDone ? "rgba(0,200,83,0.15)" : "rgba(255,255,255,0.06)", borderRadius: m ? 10 : 12 }}>
                   <Icon src={task.icon} size={m ? 20 : 24} />
                 </div>
 
-                {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 2 }}>
                     <span className="dh" style={{ color: "white", fontWeight: 800, fontSize: m ? "13px" : "14px" }}>{task.name}</span>
-                    {isDone       && <Badge label="DONE"     color="#00c853" bg="rgba(0,200,83,0.2)" />}
-                    {task.auto    && <Badge label="AUTO"     color="#f0b429" bg="rgba(240,180,41,0.2)" />}
-                    {task.oneTime && !isDone && <Badge label="ONE-TIME" color="#a855f7" bg="rgba(168,85,247,0.2)" />}
+                    {isDone            && <Badge label="DONE"      color="#00c853" bg="rgba(0,200,83,0.2)" />}
+                    {task.auto         && <Badge label="AUTO"      color="#f0b429" bg="rgba(240,180,41,0.2)" />}
+                    {task.oneTime && !isDone && <Badge label="ONE-TIME"  color="#a855f7" bg="rgba(168,85,247,0.2)" />}
                     {task.hasSubs && !isDone && <Badge label="+BONUS XP" color="#00d4ff" bg="rgba(0,82,255,0.2)" />}
                   </div>
                   <div className="db" style={{ color: "#8892a4", fontSize: m ? "11px" : "12px" }}>{task.description}</div>
                 </div>
 
-                {/* XP + cost */}
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div className="dh" style={{ color: "#f0b429", fontWeight: 800, fontSize: m ? "14px" : "15px" }}>+{task.xp} XP</div>
                   {task.ethCost !== "0" && <div className="db" style={{ color: "#5a6478", fontSize: "10px" }}>{task.ethCost} ETH</div>}
@@ -211,18 +226,22 @@ export default function QuestBoard({ quests, wallet }) {
                         type="text"
                         placeholder={task.fieldPlaceholder}
                         value={fieldValues[task.id]?.[task.field] || ""}
-                        onChange={e => handleField(task.id, task.field, e.target.value)}
+                        onChange={e => { e.stopPropagation(); handleField(task.id, task.field, e.target.value); }}
+                        onClick={e => e.stopPropagation()}
                         style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "9px 12px", color: "white", fontSize: "13px", outline: "none", fontFamily: "DM Sans, sans-serif" }}
                       />
                     </div>
                   )}
 
-                  {task.id === "deploy"  && renderSubTasks(DEPLOY_PLATFORMS, "deploy")}
-                  {task.id === "swap"    && renderSubTasks(SWAP_PLATFORMS,   "swap")}
-                  {task.id === "bridge"  && renderSubTasks(BRIDGE_PLATFORMS, "bridge")}
+                  {task.id === "deploy" && renderSubTasks(DEPLOY_PLATFORMS, "deploy")}
+                  {task.id === "swap"   && renderSubTasks(SWAP_PLATFORMS,   "swap")}
+                  {task.id === "bridge" && renderSubTasks(BRIDGE_PLATFORMS, "bridge")}
 
-                  <button onClick={() => handleComplete(task.id)} disabled={txPending}
-                    style={{ width: "100%", marginTop: 12, background: txPending ? "rgba(0,82,255,0.3)" : "linear-gradient(135deg,#0052ff,#0041cc)", border: "none", borderRadius: 12, padding: m ? "11px" : "13px", color: "white", fontWeight: 800, fontSize: m ? "13px" : "14px", cursor: txPending ? "not-allowed" : "pointer", boxShadow: txPending ? "none" : "0 4px 20px rgba(0,82,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontFamily: "Syne, sans-serif" }}>
+                  <button
+                    onClick={e => handleComplete(e, task.id)}
+                    disabled={txPending}
+                    style={{ width: "100%", marginTop: 12, background: txPending ? "rgba(0,82,255,0.3)" : "linear-gradient(135deg,#0052ff,#0041cc)", border: "none", borderRadius: 12, padding: m ? "11px" : "13px", color: "white", fontWeight: 800, fontSize: m ? "13px" : "14px", cursor: txPending ? "not-allowed" : "pointer", boxShadow: txPending ? "none" : "0 4px 20px rgba(0,82,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontFamily: "Syne, sans-serif" }}
+                  >
                     {txPending
                       ? <><Icon src="/hourglass.svg" size={15} style={{ opacity: 0.7 }} /> Confirming...</>
                       : <><Icon src="/check.svg"     size={15} style={{ opacity: 0.9 }} /> Complete — {task.ethCost} ETH</>
