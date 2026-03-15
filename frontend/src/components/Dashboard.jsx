@@ -38,7 +38,7 @@ export default function Dashboard({ quests, wallet, setPage }) {
 
   if (!isConnected) return (
     <div className="db" style={{ padding: m ? "48px 0" : "72px 0", textAlign: "center" }}>
-      <Icon src="/base.svg" size={m ? 48 : 64} style={{ margin: "0 auto 50px", opacity: 0.85 }} />
+      <Icon src="/base.svg" size={m ? 80 : 110} style={{ margin: "0 auto 24px", filter: "invert(27%) sepia(98%) saturate(2000%) hue-rotate(210deg) brightness(105%) contrast(105%)" }} />
       <h1 className="dh" style={{ color: "white", fontSize: m ? "18px" : "22px", fontWeight: 900, margin: "0 0 10px", lineHeight: 1.3 }}>
         Skill issue if you're not on chain yet.
       </h1>
